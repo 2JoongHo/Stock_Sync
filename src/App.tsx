@@ -13,6 +13,7 @@ function App() {
     location: "",
     currentStock: 0,
     unit: "ea",
+    safetyStock: 0,
   });
 
   // 자재 등록 처리
@@ -36,6 +37,7 @@ function App() {
       location: "",
       currentStock: 0,
       unit: "ea",
+      safetyStock: 0,
     });
     alert("새 자재가 등록되었습니다.");
   };
@@ -73,6 +75,9 @@ function App() {
     ];
     setItems(initialData);
   }, [setItems]);
+
+  // 일괄 위험 재고 기준(기본값: 50)
+  const GLOBAL_SAFETY_STOCK = 50;
 
   return (
     <div>
@@ -154,7 +159,7 @@ function App() {
           borderRadius: "8px",
         }}
       >
-        <h2 style={{ marginTop: 0 }}>📦 완제품 출고 (BOM 시스템)</h2>
+        <h2 style={{ marginTop: 0 }}>📦 완제품 출고</h2>
         <p>
           <strong>{monitorProduct.name}</strong> 1대당 [디스플레이 1개, 볼트
           20개] 소모
@@ -191,9 +196,13 @@ function App() {
 
       {/* 개별 자재 현황 및 수동 입출고 */}
       <section style={{ marginTop: "20px" }}>
-        <h2>📊 실시간 자재 현황 (수동 관리)</h2>
+        <h2>📊 실시간 자재 현황</h2>
         {items.map((item) => {
           const inputId = `input-${item.id}`;
+
+          // 재고 위험 판별
+          const safetyLimit = item.safetyStock ?? GLOBAL_SAFETY_STOCK; // 개별 설정 우위
+          const isLowStock = item.currentStock <= safetyLimit;
 
           const handleUpdate = (type: "IN" | "OUT") => {
             const inputElement = document.getElementById(
@@ -220,15 +229,49 @@ function App() {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "space-between",
-                backgroundColor: "#fff",
+                // 재고가 적으면 배경을 연한 빨간색으로 변경
+                backgroundColor: isLowStock ? "#fff1f2" : "#fff",
                 borderRadius: "8px",
                 boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
+                // 재고가 적으면 테두리를 빨간색으로 강조
+                border: isLowStock ? "2px solid #fda4af" : "1px solid #eee",
+                transition: "all 0.3s ease", // 부드러운 색상 전환
               }}
             >
               <div style={{ flex: 1 }}>
-                <strong>{item.name}</strong> | <small>{item.spec}</small> <br />
-                현 재고:{" "}
-                <span style={{ fontSize: "1.2rem", color: "#1e293b" }}>
+                <div
+                  style={{ display: "flex", alignItems: "center", gap: "8px" }}
+                >
+                  <strong>{item.name}</strong>
+                  {/* 재고 위험 아이콘/텍스트 표시 */}
+                  {isLowStock && (
+                    <span
+                      style={{
+                        backgroundColor: "#e11d48",
+                        color: "white",
+                        fontSize: "0.7rem",
+                        padding: "2px 6px",
+                        borderRadius: "4px",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      ⚠️ 재고부족
+                    </span>
+                  )}
+                </div>
+                <small style={{ color: "#64748b" }}>
+                  {item.spec} | 기준: {safetyLimit}
+                  {item.unit}
+                </small>{" "}
+                <br />현 재고:{" "}
+                <span
+                  style={{
+                    fontSize: "1.2rem",
+                    fontWeight: "bold",
+                    // 재고가 적으면 숫자 색상을 빨간색으로
+                    color: isLowStock ? "#e11d48" : "#1e293b",
+                  }}
+                >
                   {item.currentStock}
                 </span>{" "}
                 {item.unit}
@@ -298,7 +341,7 @@ function App() {
           )}
 
           {logs.map((log) => {
-            // 로그의 itemId를 가지고 현재 아이템 리스트에서 이름을 찾아옵니다.
+            // 로그의 itemId를 가지고 현재 아이템 리스트에서 이름 확인
             const itemName =
               items.find((i) => i.id === log.itemId)?.name || "삭제된 자재";
 

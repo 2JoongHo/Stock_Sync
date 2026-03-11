@@ -31,3 +31,15 @@ export interface Product {
   name: string; // 완제품명
   bom: BOMItem[]; // 자재 리스트
 }
+
+// 위험재고
+export interface InventoryItem {
+  id: string;
+  name: string;
+  spec: string;
+  category: string;
+  currentStock: number;
+  unit: string;
+  location: string;
+  safetyStock?: number; // 개별 위험 재고 기준 (없으면 일괄 기준 적용)
+}
