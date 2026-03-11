@@ -91,34 +91,93 @@ function App() {
       {/* 개별 자재 현황 및 수동 입출고 */}
       <section style={{ marginTop: "20px" }}>
         <h2>📊 실시간 자재 현황 (수동 관리)</h2>
-        {items.map((item) => (
-          <div
-            key={item.id}
-            style={{
-              marginBottom: "15px",
-              padding: "10px",
-              borderBottom: "1px solid #eee",
-            }}
-          >
-            <span>
-              {item.name} | 현 재고: <strong>{item.currentStock}</strong>{" "}
-              {item.unit}
-            </span>
+        {items.map((item) => {
+          // 각 자재별로 입력 수량을 관리하기 위해 임시 ID를 활용한 입력창 제어가 필요하지만,
+          // 가장 간단하게 처리하기 위해 'input' 태그의 ID를 활용해 값을 가져오겠습니다.
 
-            <button
-              onClick={() => updateStock(item.id, 10)}
-              style={{ marginLeft: "10px", padding: "5px 10px" }}
+          const inputId = `input-${item.id}`;
+
+          const handleUpdate = (type: "IN" | "OUT") => {
+            const inputElement = document.getElementById(
+              inputId,
+            ) as HTMLInputElement;
+            const value = Number(inputElement.value);
+
+            if (value <= 0) return alert("1 이상의 수량을 입력해주세요.");
+
+            // 입고면 양수(+), 출고면 음수(-)로 전달
+            const finalAmount = type === "IN" ? value : -value;
+            updateStock(item.id, finalAmount);
+
+            inputElement.value = ""; // 입력 후 칸 비우기
+          };
+
+          return (
+            <div
+              key={item.id}
+              style={{
+                marginBottom: "15px",
+                padding: "15px",
+                borderBottom: "1px solid #eee",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                backgroundColor: "#fff",
+                borderRadius: "8px",
+                boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
+              }}
             >
-              +10 수동입고
-            </button>
-            <button
-              onClick={() => updateStock(item.id, -10)}
-              style={{ marginLeft: "5px", padding: "5px 10px" }}
-            >
-              -10 수동출고
-            </button>
-          </div>
-        ))}
+              <div style={{ flex: 1 }}>
+                <strong>{item.name}</strong> | <small>{item.spec}</small> <br />
+                현 재고:{" "}
+                <span style={{ fontSize: "1.2rem", color: "#1e293b" }}>
+                  {item.currentStock}
+                </span>{" "}
+                {item.unit}
+              </div>
+
+              <div style={{ display: "flex", gap: "8px" }}>
+                {/* 수량 입력창 */}
+                <input
+                  id={inputId}
+                  type="number"
+                  placeholder="수량"
+                  style={{ width: "70px", padding: "5px", textAlign: "right" }}
+                />
+
+                {/* 입고 버튼 */}
+                <button
+                  onClick={() => handleUpdate("IN")}
+                  style={{
+                    padding: "5px 12px",
+                    backgroundColor: "#10b981",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "4px",
+                    cursor: "pointer",
+                  }}
+                >
+                  입고
+                </button>
+
+                {/* 출고 버튼 */}
+                <button
+                  onClick={() => handleUpdate("OUT")}
+                  style={{
+                    padding: "5px 12px",
+                    backgroundColor: "#ef4444",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "4px",
+                    cursor: "pointer",
+                  }}
+                >
+                  출고
+                </button>
+              </div>
+            </div>
+          );
+        })}
       </section>
 
       <hr style={{ margin: "40px 0", border: "1px solid #e2e8f0" }} />
