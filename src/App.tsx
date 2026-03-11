@@ -1,10 +1,44 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useInventoryStore } from "./stores/useInventoryStore";
 import type { InventoryItem, Product } from "./types/inventory";
 
 function App() {
   const { items, logs, setItems, updateStock, dispatchProduct } =
     useInventoryStore();
+
+  // 신규 자재 등록
+  const [formData, setFormData] = useState({
+    name: "",
+    spec: "",
+    location: "",
+    currentStock: 0,
+    unit: "ea",
+  });
+
+  // 자재 등록 처리
+  const handleAddItem = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.name) return alert("자재명을 입력해주세요.");
+
+    const newItem: InventoryItem = {
+      ...formData,
+      id: `ITEM-${Date.now()}`, // 고유 Id 자동 생성
+      category: "부품",
+    };
+
+    // 기존 리스트에 새 자재 추가
+    setItems([...items, newItem]);
+
+    // 입력창 초기화
+    setFormData({
+      name: "",
+      spec: "",
+      location: "",
+      currentStock: 0,
+      unit: "ea",
+    });
+    alert("새 자재가 등록되었습니다.");
+  };
 
   const monitorProduct: Product = {
     id: "PROD-001",
@@ -16,11 +50,12 @@ function App() {
   };
 
   useEffect(() => {
+    // 초기 데이터
     const initialData: InventoryItem[] = [
       {
         id: "1",
         name: "M10 볼트",
-        spec: "STS304",
+        spec: "M10",
         category: "부품",
         currentStock: 100,
         unit: "ea",
@@ -29,7 +64,7 @@ function App() {
       {
         id: "2",
         name: "STS304 너트",
-        spec: "M10",
+        spec: "STS304",
         category: "부품",
         currentStock: 200,
         unit: "ea",
@@ -42,6 +77,72 @@ function App() {
   return (
     <div>
       <h1>StockSync 실시간</h1>
+
+      {/* 신규 자재 등록 섹션 */}
+      <section
+        style={{
+          marginBottom: "30px",
+          padding: "20px",
+          backgroundColor: "#f1f5f9",
+          border: "1px solid #cbd5e1",
+          borderRadius: "8px",
+        }}
+      >
+        <h2 style={{ marginTop: 0 }}>➕ 신규 자재 등록</h2>
+        <form
+          onSubmit={handleAddItem}
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr 1fr",
+            gap: "10px",
+          }}
+        >
+          <input
+            placeholder="자재명"
+            value={formData.name}
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            style={{ padding: "8px" }}
+          />
+          <input
+            placeholder="규격(Spec)"
+            value={formData.spec}
+            onChange={(e) => setFormData({ ...formData, spec: e.target.value })}
+            style={{ padding: "8px" }}
+          />
+          <input
+            type="number"
+            placeholder="초기재고"
+            value={formData.currentStock}
+            onChange={(e) =>
+              setFormData({ ...formData, currentStock: Number(e.target.value) })
+            }
+            style={{ padding: "8px" }}
+          />
+          <input
+            placeholder="창고 위치"
+            value={formData.location}
+            onChange={(e) =>
+              setFormData({ ...formData, location: e.target.value })
+            }
+            style={{ padding: "8px" }}
+          />
+          <button
+            type="submit"
+            style={{
+              gridColumn: "span 2",
+              padding: "10px",
+              backgroundColor: "#10b981",
+              color: "white",
+              border: "none",
+              borderRadius: "4px",
+              cursor: "pointer",
+              fontWeight: "bold",
+            }}
+          >
+            자재 등록
+          </button>
+        </form>
+      </section>
 
       {/* 완제품(BOM) 출고 제어 */}
       <section
@@ -92,9 +193,6 @@ function App() {
       <section style={{ marginTop: "20px" }}>
         <h2>📊 실시간 자재 현황 (수동 관리)</h2>
         {items.map((item) => {
-          // 각 자재별로 입력 수량을 관리하기 위해 임시 ID를 활용한 입력창 제어가 필요하지만,
-          // 가장 간단하게 처리하기 위해 'input' 태그의 ID를 활용해 값을 가져오겠습니다.
-
           const inputId = `input-${item.id}`;
 
           const handleUpdate = (type: "IN" | "OUT") => {

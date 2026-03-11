@@ -102,7 +102,7 @@ export const useInventoryStore = create<InventoryState>((set) => ({
 
       return {
         items: updatedItems,
-        logs: [...newLogs, ...state.logs].slice(0, 50),
+        logs: [...newLogs, ...state.logs].slice(0, 10),
       };
     }),
 }));
