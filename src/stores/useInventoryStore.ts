@@ -3,20 +3,26 @@ import type { InventoryItem, Product, StockLog } from "../types/inventory";
 
 // StockSync 중앙 상태 관리(Store) 인터페이스
 interface InventoryState {
-  items: InventoryItem[]; // 자재 마스터 데이터 (Single Source of Truth)
+  items: InventoryItem[]; // 자재 마스터 데이터
   logs: StockLog[]; // 입출고 이력 데이터
+  products: Product[]; // 완제품 리스트
+  setProducts: (newProducts: Product[]) => void; // 완제품 설정 함수
   // 자재 리스트 초기화 또는 일괄 업데이트
   setItems: (newItems: InventoryItem[]) => void;
   // 단일 자재 수동 입출고
   updateStock: (itemId: string, amount: number) => void;
   // BOM 기반 완제품 단위 통합 출고
   dispatchProduct: (product: Product, productAmount: number) => void;
+  // 완제품 추가 함수
+  addProduct: (newProduct: Product) => void;
 }
 
 export const useInventoryStore = create<InventoryState>((set) => ({
   // 초기 상태
   items: [],
   logs: [],
+  products: [],
+  setProducts: (newProducts) => set({ products: newProducts }),
 
   // 자재 마스터 데이터 설정
   setItems: (newItems) => set({ items: newItems }),
@@ -105,4 +111,10 @@ export const useInventoryStore = create<InventoryState>((set) => ({
         logs: [...newLogs, ...state.logs].slice(0, 10),
       };
     }),
+
+  // 완제품 추가 로직
+  addProduct: (newProduct) =>
+    set((state) => ({
+      products: [...state.products, newProduct],
+    })),
 }));
