@@ -7,7 +7,10 @@ import type { Product } from "../types/inventory";
 
 export const ProductDispatch = () => {
   // Zustand에서 완제품 목록(products)과 생산 실행 함수를 가져옴
-  const { products, dispatchProduct } = useInventoryStore();
+  const { products, dispatchProduct, removeProduct } = useInventoryStore();
+
+  // 편집모드 상태
+  const [isEditMode, setIsEditMode] = useState(false);
 
   // 검색어 상태
   const [searchTerm, setSearchTerm] = useState("");
@@ -52,7 +55,31 @@ export const ProductDispatch = () => {
         borderRadius: "8px",
       }}
     >
-      <h2 style={{ marginTop: 0 }}>📦 완제품 출고</h2>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          marginBottom: "20px",
+        }}
+      >
+        <h2 style={{ marginTop: 0 }}>📦 완제품 출고</h2>
+
+        {/* 편집모드 버튼 */}
+        <button
+          onClick={() => setIsEditMode(!isEditMode)}
+          style={{
+            padding: "5px 10px",
+            fontSize: "0.8rem",
+            backgroundColor: isEditMode ? "#ef4444" : "#64748b",
+            color: "white",
+            border: "none",
+            borderRadius: "4px",
+            cursor: "pointer",
+          }}
+        >
+          {isEditMode ? "편집 완료" : "목록 편집"}
+        </button>
+      </div>
 
       {/* 🔍 검색창 연결 */}
       <div style={{ marginBottom: "20px" }}>
@@ -73,6 +100,7 @@ export const ProductDispatch = () => {
             <div
               key={product.id}
               style={{
+                position: "relative",
                 padding: "15px",
                 backgroundColor: "white",
                 borderRadius: "8px",
@@ -80,6 +108,38 @@ export const ProductDispatch = () => {
                 marginBottom: "15px",
               }}
             >
+              {/* 편집모드 시 삭제버튼 등장 */}
+              {isEditMode && (
+                <button
+                  onClick={() => {
+                    if (
+                      window.confirm(`'${product.name}' 제품을 삭제할까요?`)
+                    ) {
+                      removeProduct(product.id);
+                    }
+                  }}
+                  style={{
+                    position: "absolute",
+                    top: "-10px",
+                    right: "-10px",
+                    backgroundColor: "#ef4444",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "50%",
+                    width: "24px",
+                    height: "24px",
+                    cursor: "pointer",
+                    fontWeight: "bold",
+                    boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  ×
+                </button>
+              )}
+
               <p style={{ fontSize: "0.9rem", color: "#64748b", marginTop: 0 }}>
                 {/* 현장 관리자가 보기 편하게 제품 소모 규격을 상단에 노출 */}
                 <strong>{product.name}</strong> 1대당 [

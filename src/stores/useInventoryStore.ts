@@ -16,6 +16,10 @@ interface InventoryState {
   dispatchProduct: (product: Product, productAmount: number) => void;
   // 완제품 추가 함수
   addProduct: (newProduct: Product) => void;
+  // 자재 삭제 함수
+  removeItem: (itemId: string) => void;
+  // 완제품 삭제 함수
+  removeProduct: (productId: string) => void;
 }
 
 export const useInventoryStore = create<InventoryState>()(
@@ -61,7 +65,7 @@ export const useInventoryStore = create<InventoryState>()(
             items: state.items.map((i) =>
               i.id === itemId
                 ? { ...i, currentStock: i.currentStock + amount }
-                : i
+                : i,
             ),
             // 최신 로그를 상단에 추가하고 최대 50개까지만 유지 (메모리 최적화)
             logs: [newLog, ...state.logs].slice(0, 50),
@@ -82,7 +86,7 @@ export const useInventoryStore = create<InventoryState>()(
 
             if (!item || item.currentStock < totalRequired) {
               alert(
-                `재고 부족: [${item?.name || "알 수 없는 자재"}]이(가) 부족하여 ${product.name} 출고가 취소되었습니다.`
+                `재고 부족: [${item?.name || "알 수 없는 자재"}]이(가) 부족하여 ${product.name} 출고가 취소되었습니다.`,
               );
               return state; // 단 하나라도 부족하면 전체 취소함
             }
@@ -125,7 +129,21 @@ export const useInventoryStore = create<InventoryState>()(
         set((state) => ({
           products: [...state.products, newProduct],
         })),
+
+      // 자재 삭제 로직
+      removeItem: (itemId) =>
+        set((state) => ({
+          items: state.items.filter((item) => item.id !== itemId),
+        })),
+
+      // 완제품 삭제 로직
+      removeProduct: (productId) =>
+        set((state) => ({
+          products: state.products.filter(
+            (product) => product.id !== productId,
+          ),
+        })),
     }),
-    { name: "stocksync-storage" }
-  )
+    { name: "stocksync-storage" },
+  ),
 );

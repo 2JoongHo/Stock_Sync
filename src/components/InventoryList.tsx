@@ -8,7 +8,7 @@ export const InventoryList = () => {
   // Zustand에서 자재 데이터와 수량 업데이트 함수를 가져옴
   const { items, updateStock } = useInventoryStore();
   const [searchTerm, setSearchTerm] = useState(""); // 검색어
-  const GLOBAL_SAFETY_STOCK = 50; // 개별 설정이 없을 때 적용되는 공장 전체 안전 재고 기준
+  const GLOBAL_SAFETY_STOCK = 100; // 개별 설정이 없을 때 적용되는 공장 전체 안전 재고 기준
 
   // 전체 자재 중 이름이나 규격에 검색어가 포함된 것만 골라내기
   // .filter(): 조건에 맞는 아이템만 모아 새로운 리스트를 생성
@@ -60,7 +60,7 @@ export const InventoryList = () => {
         </p>
       ) : (
         filteredItems.map((item) => {
-          // 개별 안전재고 설정이 있으면 사용, 없으면(??) 공장 기준(50)을 사용
+          // 개별 안전재고 설정이 있으면 사용, 없으면(??) 공장 기준(100)을 사용
           const safetyLimit = item.safetyStock ?? GLOBAL_SAFETY_STOCK;
           const isLowStock = item.currentStock <= safetyLimit;
 
@@ -102,7 +102,7 @@ export const InventoryList = () => {
                   )}
                 </div>
                 <small style={{ color: "#64748b" }}>
-                  {item.spec} | 기준: {safetyLimit}
+                  {item.spec} | 안전재고: {safetyLimit}
                   {item.unit}
                 </small>{" "}
                 <br />현 재고:{" "}
