@@ -5,35 +5,34 @@ import { NewProductForm } from "./components/NewProductForm";
 import { ProductDispatch } from "./components/ProductDispatch";
 import { StockLogs } from "./components/StockLogs";
 import { useInventoryStore } from "./stores/useInventoryStore";
-import type { InventoryItem } from "./types/inventory";
 
 function App() {
-  const { setItems } = useInventoryStore();
+  const { items, setItems } = useInventoryStore();
 
   useEffect(() => {
     // 초기 마스터 데이터 로드
-    const initialData: InventoryItem[] = [
-      {
-        id: "1",
-        name: "디스플레이",
-        spec: "27인치",
-        category: "부품",
-        currentStock: 100,
-        unit: "ea",
-        location: "A-1-1",
-      },
-      {
-        id: "2",
-        name: "M10 볼트",
-        spec: "STS304",
-        category: "부품",
-        currentStock: 500,
-        unit: "ea",
-        location: "A-2-1",
-      },
-    ];
-    setItems(initialData);
-  }, [setItems]);
+    if (items.length === 0) {
+      const initialData = [
+        {
+          id: "1",
+          name: "디스플레이",
+          currentStock: 10,
+          unit: "ea",
+          spec: "27인치",
+          category: "메인",
+        },
+        {
+          id: "2",
+          name: "볼트",
+          currentStock: 100,
+          unit: "ea",
+          spec: "M3",
+          category: "부자재",
+        },
+      ];
+      setItems(initialData);
+    }
+  }, []);
 
   return (
     <div
