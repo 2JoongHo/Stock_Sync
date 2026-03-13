@@ -42,7 +42,7 @@ export const ProductDispatch = () => {
 
   // 검색 로직: 상황실에 있는 모든 완제품 중 검색어에 맞는 것만 필터링
   const filteredProducts = products.filter((p) =>
-    p.name.toLowerCase().includes(searchTerm.toLowerCase()),
+    p.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -70,14 +70,14 @@ export const ProductDispatch = () => {
           style={{
             padding: "5px 10px",
             fontSize: "0.8rem",
-            backgroundColor: isEditMode ? "#ef4444" : "#64748b",
+            backgroundColor: isEditMode ? "#64748b" : "#ef4444",
             color: "white",
             border: "none",
             borderRadius: "4px",
             cursor: "pointer",
           }}
         >
-          {isEditMode ? "편집 완료" : "목록 편집"}
+          {isEditMode ? "수정완료" : "수정하기"}
         </button>
       </div>
 

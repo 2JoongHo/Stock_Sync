@@ -6,7 +6,11 @@ import { useInventoryStore } from "../stores/useInventoryStore";
 
 export const InventoryList = () => {
   // Zustand에서 자재 데이터와 수량 업데이트 함수를 가져옴
-  const { items, updateStock } = useInventoryStore();
+  const { items, updateStock, removeItem } = useInventoryStore();
+
+  // 편집모드 상태
+  const [isEditMode, setIsEditMode] = useState(false);
+
   const [searchTerm, setSearchTerm] = useState(""); // 검색어
   const GLOBAL_SAFETY_STOCK = 100; // 개별 설정이 없을 때 적용되는 공장 전체 안전 재고 기준
 
@@ -16,14 +20,14 @@ export const InventoryList = () => {
   const filteredItems = items.filter(
     (item) =>
       item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.spec.toLowerCase().includes(searchTerm.toLowerCase()),
+      item.spec.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   // 입출고 실행 함수
   const handleManualUpdate = (itemId: string, type: "IN" | "OUT") => {
     // 특정 자재의 입력창을 ID로 직접 찾아옴 (DOM 접근)
     const inputElement = document.getElementById(
-      `input-${itemId}`,
+      `input-${itemId}`
     ) as HTMLInputElement;
     const value = Number(inputElement.value);
 
@@ -47,7 +51,26 @@ export const InventoryList = () => {
           marginBottom: "20px",
         }}
       >
-        <h2>📊 실시간 자재 현황</h2>
+        <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
+          <h2 style={{ margin: 0 }}>📊 실시간 자재 현황</h2>
+
+          {/* 자재 관리 모드 버튼 */}
+          <button
+            onClick={() => setIsEditMode(!isEditMode)}
+            style={{
+              padding: "5px 12px",
+              fontSize: "0.8rem",
+              backgroundColor: isEditMode ? "#64748b" : "#ef4444",
+              color: "white",
+              border: "none",
+              borderRadius: "20px",
+              cursor: "pointer",
+              fontWeight: "bold",
+            }}
+          >
+            {isEditMode ? "수정완료" : "수정하기"}
+          </button>
+        </div>
 
         {/* 검색창 */}
         <InventorySearch value={searchTerm} onChange={setSearchTerm} />
@@ -117,43 +140,72 @@ export const InventoryList = () => {
                 {item.unit}
               </div>
 
-              {/* 수량 입력 및 버튼 그룹 */}
-              <div style={{ display: "flex", gap: "8px" }}>
-                <input
-                  id={`input-${item.id}`}
-                  type="number"
-                  placeholder="수량"
-                  style={{ width: "60px", padding: "5px", textAlign: "right" }}
-                />
+              {/* 모드에 따라 버튼 그룹을 다르게 */}
+              {isEditMode ? (
+                // 관리 모드일 때는 삭제 버튼 노출
                 <button
-                  onClick={() => handleManualUpdate(item.id, "IN")}
-                  style={{
-                    backgroundColor: "#10b981",
-                    color: "white",
-                    border: "none",
-                    padding: "5px 12px",
-                    borderRadius: "4px",
-                    cursor: "pointer",
-                    fontWeight: "bold",
+                  onClick={() => {
+                    if (
+                      window.confirm(`'${item.name}' 자재를 삭제하시겠습니까?`)
+                    ) {
+                      removeItem(item.id);
+                    }
                   }}
-                >
-                  입고
-                </button>
-                <button
-                  onClick={() => handleManualUpdate(item.id, "OUT")}
                   style={{
                     backgroundColor: "#ef4444",
                     color: "white",
                     border: "none",
-                    padding: "5px 10px",
+                    padding: "8px 15px",
                     borderRadius: "4px",
                     cursor: "pointer",
                     fontWeight: "bold",
                   }}
                 >
-                  출고
+                  삭제
                 </button>
-              </div>
+              ) : (
+                // 일반 모드일 때는 입출고 입력창 노출
+                <div style={{ display: "flex", gap: "8px" }}>
+                  <input
+                    id={`input-${item.id}`}
+                    type="number"
+                    placeholder="수량"
+                    style={{
+                      width: "60px",
+                      padding: "5px",
+                      textAlign: "right",
+                    }}
+                  />
+                  <button
+                    onClick={() => handleManualUpdate(item.id, "IN")}
+                    style={{
+                      backgroundColor: "#10b981",
+                      color: "white",
+                      border: "none",
+                      padding: "5px 12px",
+                      borderRadius: "4px",
+                      cursor: "pointer",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    입고
+                  </button>
+                  <button
+                    onClick={() => handleManualUpdate(item.id, "OUT")}
+                    style={{
+                      backgroundColor: "#ef4444",
+                      color: "white",
+                      border: "none",
+                      padding: "5px 10px",
+                      borderRadius: "4px",
+                      cursor: "pointer",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    출고
+                  </button>
+                </div>
+              )}
             </div>
           );
         })
