@@ -3,10 +3,11 @@
 import { useState } from "react";
 import { InventorySearch } from "../components/InventorySearch";
 import { useInventoryStore } from "../stores/useInventoryStore";
+import { exportFullInventoryReport } from "../utils/excelUtils"; // 엑셀로 내보내기
 
 export const InventoryList = () => {
   // Zustand에서 자재 데이터와 수량 업데이트 함수를 가져옴
-  const { items, updateStock, removeItem } = useInventoryStore();
+  const { items, logs, updateStock, removeItem } = useInventoryStore();
 
   // 편집모드 상태
   const [isEditMode, setIsEditMode] = useState(false);
@@ -53,6 +54,23 @@ export const InventoryList = () => {
       >
         <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
           <h2 style={{ margin: 0 }}>📊 실시간 자재 현황</h2>
+
+          {/* 엑셀 내보내기 버튼 추가 */}
+          <button
+            onClick={() => exportFullInventoryReport(items, logs)}
+            style={{
+              padding: "5px 12px",
+              backgroundColor: "#1e293b",
+              color: "white",
+              border: "none",
+              borderRadius: "4px",
+              cursor: "pointer",
+              fontWeight: "bold",
+              fontSize: "0.8rem",
+            }}
+          >
+            엑셀로 내보내기
+          </button>
 
           {/* 자재 관리 모드 버튼 */}
           <button
