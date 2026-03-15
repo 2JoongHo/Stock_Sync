@@ -3,11 +3,15 @@
 import { useState } from "react";
 import { InventorySearch } from "../components/InventorySearch";
 import { useInventoryStore } from "../stores/useInventoryStore";
-import { exportFullInventoryReport } from "../utils/excelUtils"; // 엑셀로 내보내기
+import {
+  exportFullInventoryReport,
+  importInventoryFromExcel,
+} from "../utils/excelUtils"; // 엑셀로 내보내기
 
 export const InventoryList = () => {
   // Zustand에서 자재 데이터와 수량 업데이트 함수를 가져옴
-  const { items, logs, updateStock, removeItem } = useInventoryStore();
+  const { items, logs, updateStock, removeItem, setItems } =
+    useInventoryStore();
 
   // 편집모드 상태
   const [isEditMode, setIsEditMode] = useState(false);
@@ -21,14 +25,38 @@ export const InventoryList = () => {
   const filteredItems = items.filter(
     (item) =>
       item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.spec.toLowerCase().includes(searchTerm.toLowerCase())
+      item.spec.toLowerCase().includes(searchTerm.toLowerCase()),
   );
+
+  // 엑셀 업로드 핸들러 구현
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const importedItems = await importInventoryFromExcel(file);
+      if (
+        window.confirm(
+          `엑셀 파일에서 ${importedItems.length}개의 자재를 새로 추가하시겠습니까?`,
+        )
+      ) {
+        // 기존 데이터 뒤에 새 데이터 합치기
+        setItems([...items, ...importedItems]);
+        alert("자재 목록을 성공적으로 불러왔습니다.");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("엑셀 읽기 실패: 파일 형식을 확인해주세요.");
+    } finally {
+      e.target.value = ""; // 같은 파일 재업로드 가능하도록 초기화
+    }
+  };
 
   // 입출고 실행 함수
   const handleManualUpdate = (itemId: string, type: "IN" | "OUT") => {
     // 특정 자재의 입력창을 ID로 직접 찾아옴 (DOM 접근)
     const inputElement = document.getElementById(
-      `input-${itemId}`
+      `input-${itemId}`,
     ) as HTMLInputElement;
     const value = Number(inputElement.value);
 
@@ -54,6 +82,17 @@ export const InventoryList = () => {
       >
         <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
           <h2 style={{ margin: 0 }}>📊 실시간 자재 현황</h2>
+
+          {/* 엑셀 가져오기 버튼 추가 */}
+          <label className="cursor-pointer bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-1.5 rounded text-xs font-bold transition-all shadow-sm">
+            엑셀에서 가져오기
+            <input
+              type="file"
+              accept=".xlsx, .xls"
+              className="hidden"
+              onChange={handleFileUpload}
+            />
+          </label>
 
           {/* 엑셀 내보내기 버튼 추가 */}
           <button

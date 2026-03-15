@@ -6,7 +6,7 @@ import type { InventoryItem, StockLog } from "../types/inventory";
 // 자재 현황과 입출고 기록을 한번에 엑셀로 내보내기
 export const exportFullInventoryReport = (
   items: InventoryItem[],
-  logs: StockLog[]
+  logs: StockLog[],
 ) => {
   // 자재 현황
   const inventoryData = items.map((item) => ({
@@ -50,4 +50,45 @@ export const exportFullInventoryReport = (
   // 파일 생성 및 다운로드
   const date = new Date().toISOString().split("T")[0];
   XLSX.writeFile(workbook, `자재관리_${date}.xlsx`);
+};
+
+// 엑셀 파일을 읽어서 자재 데이터 끌고오기
+export const importInventoryFromExcel = (
+  file: File,
+): Promise<InventoryItem[]> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.onload = (e) => {
+      try {
+        const data = e.target?.result;
+        const workbook = XLSX.read(data, { type: "array" });
+        const sheetName = workbook.SheetNames[0]; // 첫 번째 시트 사용
+        const worksheet = workbook.Sheets[sheetName];
+
+        // 시트 데이터를 JSON 객체 배열로 반환
+        const jsonData = XLSX.utils.sheet_to_json(worksheet);
+
+        // 엑셀 한글 헤더명을 매핑
+        const mappedData: InventoryItem[] = jsonData.map((row: any) => ({
+          id: String(
+            row["자재 ID"] ||
+              `ITEM-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
+          ),
+          name: String(row["자재명"] || "이름없음"),
+          spec: String(row["규격/스펙"] || "-"),
+          currentStock: Number(row["현재 재고"]) || 0,
+          unit: String(row["단위"] || "ea"),
+          safetyStock: Number(row["안전 재고"]) || 100,
+        }));
+
+        resolve(mappedData);
+      } catch (error) {
+        reject(error);
+      }
+    };
+
+    reader.onerror = (error) => reject(error);
+    reader.readAsArrayBuffer(file);
+  });
 };
