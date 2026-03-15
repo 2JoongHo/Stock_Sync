@@ -20,6 +20,8 @@ interface InventoryState {
   removeItem: (itemId: string) => void;
   // 완제품 삭제 함수
   removeProduct: (productId: string) => void;
+  // 로그 삭제 함수
+  cancelLog: (logId: string) => void;
 }
 
 export const useInventoryStore = create<InventoryState>()(
@@ -143,6 +145,33 @@ export const useInventoryStore = create<InventoryState>()(
             (product) => product.id !== productId,
           ),
         })),
+
+      // 로그 삭제 로직
+      cancelLog: (logId) =>
+        set((state) => {
+          // 취소할 로그 찾기
+          const targetLog = state.logs.find((log) => log.id === logId);
+          if (!targetLog) return state;
+
+          // 재고 원상복구 계산 (입고 취소는 -, 출고 취소는 +)
+          const recoveryAmount =
+            targetLog.type === "IN" ? -targetLog.quantity : targetLog.quantity;
+
+          // 해당 자재의 재고 업데이트
+          const updatedItems = state.items.map((item) =>
+            item.id === targetLog.itemId
+              ? { ...item, currentStock: item.currentStock + recoveryAmount }
+              : item,
+          );
+
+          // 로그 목록에서 해당 로그 삭제
+          const updatedLogs = state.logs.filter((log) => log.id !== logId);
+
+          return {
+            items: updatedItems,
+            logs: updatedLogs,
+          };
+        }),
     }),
     { name: "stocksync-storage" },
   ),

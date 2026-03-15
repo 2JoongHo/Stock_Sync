@@ -4,7 +4,7 @@ import { useInventoryStore } from "../stores/useInventoryStore";
 
 export const StockLogs = () => {
   // Zustand에서 로그 리스트와 자재 마스터 정보를 모두 가져옴
-  const { logs, items } = useInventoryStore();
+  const { logs, items, cancelLog } = useInventoryStore();
 
   return (
     <section style={{ marginTop: "40px" }}>
@@ -46,16 +46,47 @@ export const StockLogs = () => {
                 color: log.type === "IN" ? "#166534" : "#991b1b",
               }}
             >
-              {/* 발생 시간 / 담당자 정보 */}
-              <span>
-                <strong>[{log.timestamp}]</strong> {log.handler}
-              </span>
+              <div style={{ flex: 1 }}>
+                {/* 발생 시간 / 담당자 정보 */}
+                <span>
+                  <strong>[{log.timestamp}]</strong> {log.handler}
+                </span>
 
-              {/* 입출고 내역 */}
-              <span>
-                {itemName} {log.type === "IN" ? "입고" : "출고"}: {log.quantity}
-                ea
-              </span>
+                {/* 입출고 내역 */}
+                <span>
+                  {itemName} {log.type === "IN" ? "입고" : "출고"}:{" "}
+                  {log.quantity}
+                  ea
+                </span>
+              </div>
+
+              {/* 기록 취소 버튼 */}
+              <button
+                onClick={() => {
+                  // 실수를 방지하기 위한 안전장치
+                  if (
+                    window.confirm(
+                      `[${itemName}]의 해당 내역을 취소하고 재고를 원상복구하시겠습니까?`,
+                    )
+                  ) {
+                    cancelLog(log.id);
+                  }
+                }}
+                style={{
+                  marginLeft: "10px",
+                  padding: "4px 8px",
+                  backgroundColor: "#fff",
+                  color: "#ef4444",
+                  border: "1px solid #ef4444",
+                  borderRadius: "4px",
+                  fontSize: "0.75rem",
+                  cursor: "pointer",
+                  fontWeight: "bold",
+                  transition: "all 0.2s",
+                }}
+              >
+                취소
+              </button>
             </div>
           );
         })}
