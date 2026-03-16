@@ -10,14 +10,13 @@ export const exportFullInventoryReport = (
 ) => {
   // 자재 현황
   const inventoryData = items.map((item) => ({
-    "자재 ID": item.id,
     자재명: item.name,
-    "규격/스펙": item.spec,
+    "자재 ID": item.id,
     "현재 재고": item.currentStock,
     단위: item.unit,
+    규격: item.spec,
     "안전 재고": item.safetyStock || 100,
-    상태:
-      item.currentStock <= (item.safetyStock || 100) ? "⚠️재고부족" : "정상",
+    상태: item.currentStock <= (item.safetyStock || 100) ? "재고부족" : "정상",
   }));
 
   // 입출고 기록

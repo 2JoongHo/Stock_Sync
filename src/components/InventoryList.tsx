@@ -1,6 +1,8 @@
 // 자재 현황 리스트 컴포넌트
 
 import { useState } from "react";
+import downloadIcon from "../assets/downloadIcon.svg";
+import uploadIcon from "../assets/uploadIcon.svg";
 import { InventorySearch } from "../components/InventorySearch";
 import { useInventoryStore } from "../stores/useInventoryStore";
 import {
@@ -25,7 +27,7 @@ export const InventoryList = () => {
   const filteredItems = items.filter(
     (item) =>
       item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.spec.toLowerCase().includes(searchTerm.toLowerCase())
+      item.spec.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   // 엑셀 업로드 핸들러 구현
@@ -37,7 +39,7 @@ export const InventoryList = () => {
       const importedItems = await importInventoryFromExcel(file);
       if (
         window.confirm(
-          `엑셀 파일에서 ${importedItems.length}개의 자재를 새로 추가하시겠습니까?`
+          `엑셀 파일에서 ${importedItems.length}개의 자재를 새로 추가하시겠습니까?`,
         )
       ) {
         // 기존 데이터 뒤에 새 데이터 합치기
@@ -56,7 +58,7 @@ export const InventoryList = () => {
   const handleManualUpdate = (itemId: string, type: "IN" | "OUT") => {
     // 특정 자재의 입력창을 ID로 직접 찾아옴 (DOM 접근)
     const inputElement = document.getElementById(
-      `input-${itemId}`
+      `input-${itemId}`,
     ) as HTMLInputElement;
     const value = Number(inputElement.value);
 
@@ -71,33 +73,15 @@ export const InventoryList = () => {
   };
 
   return (
-    <section
-      // style={{ marginTop: "20px" }}
-      className="mt-5"
-    >
-      <div
-        // style={{
-        //   display: "flex",
-        //   justifyContent: "space-between",
-        //   alignItems: "center",
-        //   marginBottom: "20px",
-        // }}
-        className="flex justify-between items-center mb-5"
-      >
-        <div
-          // style={{ display: "flex", alignItems: "center", gap: "15px" }}
-          className="flex items-center gap-[15px]"
-        >
-          <h2
-            // style={{ margin: 0 }}
-            className="m-0 text-xl font-bold"
-          >
-            📊 실시간 자재 현황
-          </h2>
+    <section className="mt-5">
+      <div className="flex justify-between items-center mb-5">
+        <div className="flex items-center gap-[15px]">
+          <h2 className="m-0 text-xl font-bold">📊 실시간 자재 현황</h2>
 
           {/* 엑셀 가져오기 버튼 추가 */}
-          <label className="bg-emerald-500 text-white px-3 py-1.5 rounded font-bold text-[0.8rem] cursor-pointer">
-            가져오기
+          <label className="bg-slate-900 text-white px-3 py-1.5 rounded font-bold text-[0.8rem] cursor-pointer">
+            <img src={uploadIcon} alt="upload" className="w-4 h-4 invert" />
+
             <input
               type="file"
               accept=".xlsx, .xls"
@@ -109,34 +93,14 @@ export const InventoryList = () => {
           {/* 엑셀 내보내기 버튼 추가 */}
           <button
             onClick={() => exportFullInventoryReport(items, logs)}
-            // style={{
-            //   padding: "5px 12px",
-            //   backgroundColor: "#1e293b",
-            //   color: "white",
-            //   border: "none",
-            //   borderRadius: "4px",
-            //   cursor: "pointer",
-            //   fontWeight: "bold",
-            //   fontSize: "0.8rem",
-            // }}
-            className="bg-slate-900 text-white px-3 py-1.5 rounded font-bold text-[0.8rem] cursor-pointer"
+            className="bg-emerald-500 text-white px-3 py-1.5 rounded font-bold text-[0.8rem] cursor-pointer"
           >
-            내보내기
+            <img src={downloadIcon} alt="download" className="w-4 h-4 invert" />
           </button>
 
           {/* 자재 관리 모드 버튼 */}
           <button
             onClick={() => setIsEditMode(!isEditMode)}
-            // style={{
-            //   padding: "5px 12px",
-            //   fontSize: "0.8rem",
-            //   backgroundColor: isEditMode ? "#64748b" : "#ef4444",
-            //   color: "white",
-            //   border: "none",
-            //   borderRadius: "20px",
-            //   cursor: "pointer",
-            //   fontWeight: "bold",
-            // }}
             className={`text-white px-3 py-1.5 rounded font-bold text-[0.8rem] transition-colors cursor-pointer ${isEditMode ? "bg-emerald-500" : "bg-red-500"}`}
           >
             {isEditMode ? "수정완료" : "수정하기"}
@@ -149,10 +113,7 @@ export const InventoryList = () => {
 
       {/* 필터링된 결과가 0개일 때와 있을 때를 나누어 화면을 그림 (조건부 렌더링) */}
       {filteredItems.length === 0 ? (
-        <p
-          // style={{ textAlign: "center", color: "#64748b", padding: "20px" }}
-          className="text-center text-slate-500 py-5"
-        >
+        <p className="text-center text-slate-500 py-5">
           {searchTerm ? "검색 결과가 없습니다." : "등록된 자재가 없습니다."}
         </p>
       ) : (
@@ -164,50 +125,19 @@ export const InventoryList = () => {
           return (
             <div
               key={item.id}
-              // style={{
-              //   marginBottom: "15px",
-              //   padding: "15px",
-              //   borderBottom: "1px solid #eee",
-              //   display: "flex",
-              //   alignItems: "center",
-              //   justifyContent: "space-between",
-              //   // 재고 부족 상태(isLowStock)에 따라 배경색과 테두리를 동적으로 변경
-              //   backgroundColor: isLowStock ? "#fff1f2" : "#fff",
-              //   borderRadius: "8px",
-              //   border: isLowStock ? "2px solid #fda4af" : "1px solid #eee",
-              // }}
               className={`mb-4 p-4 flex items-center justify-between rounded-lg border transition-all ${isLowStock ? "bg-rose-50 border-rose-300 border-2" : "bg-white border-slate-200"}`}
             >
-              <div
-                // style={{ flex: 1 }}
-                className="flex-1"
-              >
-                <div
-                  // style={{ display: "flex", alignItems: "center", gap: "8px" }}
-                  className="flex items-center gap-2"
-                >
+              <div className="flex-1">
+                <div className="flex items-center gap-2">
                   <strong className="text-slate-900">{item.name}</strong>
                   {/* 재고가 위험 기준치 이하면 경고 배지를 보여줌 */}
                   {isLowStock && (
-                    <span
-                      // style={{
-                      //   backgroundColor: "#e11d48",
-                      //   color: "white",
-                      //   fontSize: "0.7rem",
-                      //   padding: "2px 6px",
-                      //   borderRadius: "4px",
-                      //   fontWeight: "bold",
-                      // }}
-                      className="bg-rose-600 text-white text-[0.7rem] px-1.5 py-0.5 rounded font-bold"
-                    >
+                    <span className="bg-rose-600 text-white text-[0.7rem] px-1.5 py-0.5 rounded font-bold">
                       재고부족
                     </span>
                   )}
                 </div>
-                <small
-                  // style={{ color: "#64748b" }}
-                  className="text-slate-500 text-xs"
-                >
+                <small className="text-slate-500 text-xs">
                   {/* 규격 */}
                   {item.spec}
                 </small>{" "}
@@ -235,62 +165,27 @@ export const InventoryList = () => {
                       removeItem(item.id);
                     }
                   }}
-                  // style={{
-                  //   backgroundColor: "#ef4444",
-                  //   color: "white",
-                  //   border: "none",
-                  //   padding: "8px 15px",
-                  //   borderRadius: "4px",
-                  //   cursor: "pointer",
-                  //   fontWeight: "bold",
-                  // }}
                   className="bg-red-500 text-white px-3 py-1.5 rounded font-bold hover:bg-red-600 cursor-pointer"
                 >
                   삭제
                 </button>
               ) : (
                 // 일반 모드일 때는 입출고 입력창 노출
-                <div
-                  // style={{ display: "flex", gap: "8px" }}
-                  className="flex gap-2"
-                >
+                <div className="flex gap-2">
                   <input
                     id={`input-${item.id}`}
                     type="number"
                     placeholder="수량"
-                    // style={{
-                    //   width: "60px",
-                    //   padding: "5px",
-                    //   textAlign: "right",
-                    // }}
                     className="w-[70px] p-1.5 border border-slate-300 rounded text-right focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                   <button
                     onClick={() => handleManualUpdate(item.id, "IN")}
-                    // style={{
-                    //   backgroundColor: "#10b981",
-                    //   color: "white",
-                    //   border: "none",
-                    //   padding: "5px 12px",
-                    //   borderRadius: "4px",
-                    //   cursor: "pointer",
-                    //   fontWeight: "bold",
-                    // }}
                     className="bg-emerald-500 text-white px-3 py-1.5 rounded font-bold hover:bg-emerald-600 cursor-pointer"
                   >
                     입고
                   </button>
                   <button
                     onClick={() => handleManualUpdate(item.id, "OUT")}
-                    // style={{
-                    //   backgroundColor: "#ef4444",
-                    //   color: "white",
-                    //   border: "none",
-                    //   padding: "5px 10px",
-                    //   borderRadius: "4px",
-                    //   cursor: "pointer",
-                    //   fontWeight: "bold",
-                    // }}
                     className="bg-red-500 text-white px-3 py-1.5 rounded font-bold hover:bg-red-600 cursor-pointer"
                   >
                     출고

@@ -14,8 +14,8 @@ export interface InventoryItem {
 export interface StockLog {
   id: string;
   itemId: string;
-  type: "IN" | "OUT"; // 입고 / 출고
   quantity: number; // 수량
+  type: "IN" | "OUT"; // 입고 / 출고
   timestamp: string; // 발생 시간
   handler: string; // 담당자
 }

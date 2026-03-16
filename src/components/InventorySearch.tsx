@@ -12,12 +12,6 @@ export const InventorySearch = ({ value, onChange }: SearchProps) => {
       placeholder="자재명 또는 규격 검색..."
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      // style={{
-      //   padding: "8px 12px",
-      //   borderRadius: "20px",
-      //   border: "1px solid #cbd5e1",
-      //   width: "250px",
-      // }}
       className="py-1.5 px-3 rounded border border-slate-300 w-[250px] text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
     />
   );
