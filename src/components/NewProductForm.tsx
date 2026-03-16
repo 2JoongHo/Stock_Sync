@@ -67,12 +67,9 @@ export const NewProductForm = () => {
       <form onSubmit={handleSaveProduct}>
         {/* 제품명 입력 */}
         <div className="mb-4">
-          <label className="block font-bold mb-1.5 text-slate-700">
-            제품명
-          </label>
           <input
             type="text"
-            placeholder="ONE TOUCH ROTATE"
+            placeholder="제품명"
             value={productName}
             onChange={(e) => setProductName(e.target.value)}
             className="w-full p-2 border border-slate-300 rounded focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
@@ -136,12 +133,11 @@ export const NewProductForm = () => {
                 key={index}
                 className="text-sm border-b border-slate-50 last:border-0 py-1.5 flex justify-between items-center"
               >
-                <span className="text-slate-700 font-medium">
-                  • {material?.name}
+                <span className="text-slate-900 font-medium">
+                  <strong>• {material?.name}</strong>
                 </span>
                 <span className="text-slate-900">
-                  <strong className="text-emerald-600">{bom.quantity}</strong>{" "}
-                  개
+                  <strong>{bom.quantity}</strong> ea
                 </span>
               </div>
             );

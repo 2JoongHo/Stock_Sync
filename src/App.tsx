@@ -59,7 +59,7 @@ function App() {
             }
             className={`px-4 py-2 rounded-lg font-bold text-sm transition-all cursor-pointer border-2 ${
               activeForm === "material"
-                ? "bg-slate-800 text-white border-slate-800"
+                ? "bg-red-500 text-white border-red-500"
                 : "bg-white text-slate-700 border-slate-200 hover:border-slate-800"
             }`}
           >

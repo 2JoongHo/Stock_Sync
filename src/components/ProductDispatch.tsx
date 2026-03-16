@@ -57,17 +57,19 @@ export const ProductDispatch = () => {
         </h2>
 
         <div className="flex items-center gap-4">
-          {/* 편집모드 버튼 */}
-          <button
-            onClick={() => setIsEditMode(!isEditMode)}
-            className={`text-white px-3 py-1.5 rounded font-bold text-[0.8rem] transition-colors cursor-pointer ${isEditMode ? "bg-emerald-500" : "bg-red-500"}`}
-          >
-            {isEditMode ? "수정완료" : "수정하기"}
-          </button>
-        </div>
+          <div className="flex items-center">
+            {/* 편집모드 버튼 */}
+            <button
+              onClick={() => setIsEditMode(!isEditMode)}
+              className={`h-9 px-3 py-1.5 rounded font-bold text-xs transition-colors cursor-pointer text-white ${isEditMode ? "bg-emerald-500" : "bg-red-500"}`}
+            >
+              {isEditMode ? "수정완료" : "수정하기"}
+            </button>
+          </div>
 
-        {/* 검색창 연결 */}
-        <InventorySearch value={searchTerm} onChange={setSearchTerm} />
+          {/* 검색창 연결 */}
+          <InventorySearch value={searchTerm} onChange={setSearchTerm} />
+        </div>
       </div>
 
       {filteredProducts.length === 0 ? (
@@ -83,7 +85,7 @@ export const ProductDispatch = () => {
           return (
             <div
               key={product.id}
-              className="flex items-center justify-between p-4 mb-4 bg-white rounded-lg border border-slate-200 shadow-sm hover:border-blue-300 transition-colors"
+              className="flex flex-col p-4 mb-4 bg-white rounded-lg border border-slate-200 shadow-sm hover:border-blue-300 transition-colors"
             >
               <div className="flex items-center justify-between w-full">
                 <div className="flex-1">
@@ -119,6 +121,7 @@ export const ProductDispatch = () => {
                         type="number"
                         min="1"
                         value={currentAmount}
+                        // 입력창에 타이핑하면 숫자로 변환하여 해당 제품 ID의 수량으로 저장
                         onChange={(e) =>
                           handleAmountChange(product.id, Number(e.target.value))
                         }
@@ -150,43 +153,41 @@ export const ProductDispatch = () => {
                     삭제
                   </button>
                 )}
-
-                {/* 제품 구성 상세 리스트 (클릭 시에만 보임) */}
-                {expandedId === product.id && (
-                  <div className="mt-4 p-4 bg-slate-50 rounded-md border border-slate-200 animate-in fade-in slide-in-from-top-2">
-                    <h4 className="text-xs font-bold text-slate-500 mb-3 uppercase tracking-wider">
-                      자재 명세서 (BOM)
-                    </h4>
-                    <div className="grid grid-cols-1 gap-x-6 gap-y-2">
-                      {product.bom.map((b) => {
-                        const material = items.find(
-                          (i) => i.id === b.materialId,
-                        );
-                        return (
-                          <div
-                            key={b.materialId}
-                            className="flex justify-between text-sm py-1 border-b border-slate-200 border-dashed"
-                          >
-                            <span className="text-slate-600">
-                              • {material?.name || "알 수 없는 자재"}
-                            </span>
-                            <span className="font-medium text-slate-900">
-                              {b.quantity} ea
-                            </span>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
-
-                {/* 사용자가 수량을 입력하면 총 소모량을 미리 계산해서 보여줌 */}
-                {currentAmount > 0 && (
-                  <p className="mt-3 text-xs text-rose-500 font-medium">
-                    * 생산 시 설정된 BOM에 따라 자재 재고가 자동 차감됩니다.
-                  </p>
-                )}
               </div>
+
+              {/* 제품 구성 상세 리스트 (클릭 시에만 보임) */}
+              {expandedId === product.id && (
+                <div className="mt-4 p-4 bg-slate-50 rounded-md border border-slate-200 animate-in fade-in slide-in-from-top-2">
+                  {/* <h4 className="text-xs font-bold text-slate-500 mb-3 uppercase tracking-wider">
+                    자재 명세서 (BOM)
+                  </h4> */}
+                  <div className="grid grid-cols-1 gap-x-6 gap-y-2">
+                    {product.bom.map((b) => {
+                      const material = items.find((i) => i.id === b.materialId);
+                      return (
+                        <div
+                          key={b.materialId}
+                          className="flex justify-between text-sm py-1 border-b border-slate-200 border-dashed"
+                        >
+                          <span className="text-slate-600">
+                            • {material?.name || "알 수 없는 자재"}
+                          </span>
+                          <span className="font-medium text-slate-900">
+                            {b.quantity} ea
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* 사용자가 수량을 입력하면 총 소모량을 미리 계산해서 보여줌 */}
+              {currentAmount > 0 && (
+                <p className="mt-3 text-xs text-rose-500 font-medium font-bold">
+                  * 생산 시 설정된 BOM에 따라 자재 재고가 자동 차감됩니다.
+                </p>
+              )}
             </div>
           );
         })

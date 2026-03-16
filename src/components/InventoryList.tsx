@@ -2,18 +2,13 @@
 
 import { useState } from "react";
 import downloadIcon from "../assets/downloadIcon.svg";
-import uploadIcon from "../assets/uploadIcon.svg";
 import { InventorySearch } from "../components/InventorySearch";
 import { useInventoryStore } from "../stores/useInventoryStore";
-import {
-  exportFullInventoryReport,
-  importInventoryFromExcel,
-} from "../utils/excelUtils"; // 엑셀로 내보내기
+import { exportFullInventoryReport } from "../utils/excelUtils"; // 엑셀로 내보내기
 
 export const InventoryList = () => {
   // Zustand에서 자재 데이터와 수량 업데이트 함수를 가져옴
-  const { items, logs, updateStock, removeItem, setItems } =
-    useInventoryStore();
+  const { items, logs, updateStock, removeItem } = useInventoryStore();
 
   // 편집모드 상태
   const [isEditMode, setIsEditMode] = useState(false);
@@ -29,30 +24,6 @@ export const InventoryList = () => {
       item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       item.spec.toLowerCase().includes(searchTerm.toLowerCase()),
   );
-
-  // 엑셀 업로드 핸들러 구현
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    try {
-      const importedItems = await importInventoryFromExcel(file);
-      if (
-        window.confirm(
-          `엑셀 파일에서 ${importedItems.length}개의 자재를 새로 추가하시겠습니까?`,
-        )
-      ) {
-        // 기존 데이터 뒤에 새 데이터 합치기
-        setItems([...items, ...importedItems]);
-        alert("자재 목록을 성공적으로 불러왔습니다.");
-      }
-    } catch (error) {
-      console.error(error);
-      alert("엑셀 읽기 실패: 파일 형식을 확인해주세요.");
-    } finally {
-      e.target.value = ""; // 같은 파일 재업로드 가능하도록 초기화
-    }
-  };
 
   // 입출고 실행 함수
   const handleManualUpdate = (itemId: string, type: "IN" | "OUT") => {
@@ -75,40 +46,37 @@ export const InventoryList = () => {
   return (
     <section className="mt-5">
       <div className="flex justify-between items-center mb-5">
-        <div className="flex items-center gap-[15px]">
-          <h2 className="m-0 text-xl font-bold">📊 실시간 자재 현황</h2>
+        <h2 className="m-0 text-xl font-bold text-slate-900 flex items-center gap-2">
+          📊 실시간 자재 현황
+        </h2>
 
-          {/* 엑셀 가져오기 버튼 추가 */}
-          <label className="bg-slate-900 text-white px-3 py-1.5 rounded font-bold text-[0.8rem] cursor-pointer">
-            <img src={uploadIcon} alt="upload" className="w-4 h-4 invert" />
+        {/* 오른쪽 정렬 그룹: 엑셀버튼 + 수정버튼 + 검색창 */}
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            {/* 엑셀 내보내기 버튼 */}
+            <button
+              onClick={() => exportFullInventoryReport(items, logs)}
+              className="flex items-center justify-center w-9 h-9 bg-emerald-500 text-white rounded font-bold cursor-pointer hover:bg-emerald-600 transition-all shadow-sm"
+            >
+              <img
+                src={downloadIcon}
+                alt="download"
+                className="w-5 h-5 invert"
+              />
+            </button>
 
-            <input
-              type="file"
-              accept=".xlsx, .xls"
-              className="hidden"
-              onChange={handleFileUpload}
-            />
-          </label>
+            {/* 자재 관리 모드 버튼 */}
+            <button
+              onClick={() => setIsEditMode(!isEditMode)}
+              className={`h-9 px-4 rounded font-bold text-xs transition-colors cursor-pointer text-white ${isEditMode ? "bg-emerald-500" : "bg-red-500"}`}
+            >
+              {isEditMode ? "수정완료" : "수정하기"}
+            </button>
+          </div>
 
-          {/* 엑셀 내보내기 버튼 추가 */}
-          <button
-            onClick={() => exportFullInventoryReport(items, logs)}
-            className="bg-emerald-500 text-white px-3 py-1.5 rounded font-bold text-[0.8rem] cursor-pointer"
-          >
-            <img src={downloadIcon} alt="download" className="w-4 h-4 invert" />
-          </button>
-
-          {/* 자재 관리 모드 버튼 */}
-          <button
-            onClick={() => setIsEditMode(!isEditMode)}
-            className={`text-white px-3 py-1.5 rounded font-bold text-[0.8rem] transition-colors cursor-pointer ${isEditMode ? "bg-emerald-500" : "bg-red-500"}`}
-          >
-            {isEditMode ? "수정완료" : "수정하기"}
-          </button>
+          {/* 검색창 */}
+          <InventorySearch value={searchTerm} onChange={setSearchTerm} />
         </div>
-
-        {/* 검색창 */}
-        <InventorySearch value={searchTerm} onChange={setSearchTerm} />
       </div>
 
       {/* 필터링된 결과가 0개일 때와 있을 때를 나누어 화면을 그림 (조건부 렌더링) */}
@@ -165,7 +133,7 @@ export const InventoryList = () => {
                       removeItem(item.id);
                     }
                   }}
-                  className="bg-red-500 text-white px-3 py-1.5 rounded font-bold hover:bg-red-600 cursor-pointer"
+                  className="bg-red-500 text-white px-3 py-2 rounded font-bold hover:bg-red-600 cursor-pointer text-sm"
                 >
                   삭제
                 </button>
@@ -176,17 +144,17 @@ export const InventoryList = () => {
                     id={`input-${item.id}`}
                     type="number"
                     placeholder="수량"
-                    className="w-[70px] p-1.5 border border-slate-300 rounded text-right focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-20 p-1.5 border border-slate-300 rounded text-right focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                   <button
                     onClick={() => handleManualUpdate(item.id, "IN")}
-                    className="bg-emerald-500 text-white px-3 py-1.5 rounded font-bold hover:bg-emerald-600 cursor-pointer"
+                    className="bg-emerald-500 text-white px-3 py-2 rounded font-bold hover:bg-emerald-600 cursor-pointer text-sm"
                   >
                     입고
                   </button>
                   <button
                     onClick={() => handleManualUpdate(item.id, "OUT")}
-                    className="bg-red-500 text-white px-3 py-1.5 rounded font-bold hover:bg-red-600 cursor-pointer"
+                    className="bg-red-500 text-white px-3 py-2 rounded font-bold hover:bg-red-600 cursor-pointer text-sm"
                   >
                     출고
                   </button>

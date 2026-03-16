@@ -1,8 +1,10 @@
 // 신규 자재 등록 컴포넌트
 
 import { useState } from "react";
+import uploadIcon from "../assets/uploadIcon.svg";
 import { useInventoryStore } from "../stores/useInventoryStore";
 import type { InventoryItem } from "../types/inventory";
+import { importInventoryFromExcel } from "../utils/excelUtils";
 
 export const NewInventoryForm = () => {
   // Zustand에서 현재 자재 리스트와 리스트 업데이트 함수를 가져옴
@@ -17,6 +19,30 @@ export const NewInventoryForm = () => {
     currentStock: 0,
     unit: "ea",
   });
+
+  // 엑셀 업로드 핸들러 구현
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const importedItems = await importInventoryFromExcel(file);
+      if (
+        window.confirm(
+          `엑셀 파일에서 ${importedItems.length}개의 자재를 새로 추가하시겠습니까?`,
+        )
+      ) {
+        // 기존 데이터 뒤에 새 데이터 합치기
+        setItems([...items, ...importedItems]);
+        alert("자재 목록을 성공적으로 불러왔습니다.");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("엑셀 읽기 실패: 파일 형식을 확인해주세요.");
+    } finally {
+      e.target.value = ""; // 같은 파일 재업로드 가능하도록 초기화
+    }
+  };
 
   // 자재 등록 함수
   const handleAddItem = (e: React.FormEvent) => {
@@ -50,9 +76,22 @@ export const NewInventoryForm = () => {
 
   return (
     <section className="mb-8 p-5 bg-slate-100 rounded-lg">
-      <h2 className="mt-0 mb-4 text-xl font-bold text-slate-900">
-        ➕ 신규 자재 등록
-      </h2>
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="mt-0 mb-4 text-xl font-bold text-slate-900">
+          ➕ 신규 자재 등록
+        </h2>
+
+        {/* 엑셀 가져오기 버튼 */}
+        <label className="flex items-center justify-center w-9 h-9 bg-emerald-500 text-white rounded font-bold cursor-pointer hover:bg-emerald-600 transition-all shadow-sm">
+          <img src={uploadIcon} alt="upload" className="w-5 h-5 invert" />
+          <input
+            type="file"
+            accept=".xlsx, .xls"
+            className="hidden"
+            onChange={handleFileUpload}
+          />
+        </label>
+      </div>
 
       <form onSubmit={handleAddItem} className="grid grid-cols-3 gap-2.5">
         {/* 입력창 */}
@@ -63,7 +102,7 @@ export const NewInventoryForm = () => {
           className="p-2 border border-slate-300 rounded focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
         />
         <input
-          placeholder="규격(Spec)"
+          placeholder="규격 / 스펙"
           value={formData.spec}
           onChange={(e) => setFormData({ ...formData, spec: e.target.value })}
           className="p-2 border border-slate-300 rounded focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
