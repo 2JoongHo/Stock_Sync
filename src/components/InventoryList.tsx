@@ -106,8 +106,8 @@ export const InventoryList = () => {
                   )}
                 </div>
                 <small className="text-slate-500 text-xs">
-                  {/* 규격 */}
-                  {item.spec}
+                  {/* 규격 | 제품코드 */}
+                  {item.spec} | {item.id}
                 </small>{" "}
                 <div className="mt-1">
                   <span className="text-medium text-slate-600">현 재고: </span>

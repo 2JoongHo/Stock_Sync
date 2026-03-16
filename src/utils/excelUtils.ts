@@ -3,6 +3,17 @@
 import * as XLSX from "xlsx";
 import type { InventoryItem, StockLog } from "../types/inventory";
 
+interface ExcelRow {
+  제품명?: string;
+  제품코드?: string;
+  "현재 재고"?: number;
+  단위?: string;
+  규격?: string;
+  "규격/스펙"?: string;
+  카테고리?: string;
+  "안전 재고"?: number;
+}
+
 // 자재 현황과 입출고 기록을 한번에 엑셀로 내보내기
 export const exportFullInventoryReport = (
   items: InventoryItem[],
@@ -10,24 +21,24 @@ export const exportFullInventoryReport = (
 ) => {
   // 자재 현황
   const inventoryData = items.map((item) => ({
-    자재명: item.name,
-    "자재 ID": item.id,
+    제품명: item.name,
+    제품코드: item.id,
     "현재 재고": item.currentStock,
     단위: item.unit,
     규격: item.spec,
-    "안전 재고": item.safetyStock || 100,
+    // "안전 재고": item.safetyStock || 100,
     상태: item.currentStock <= (item.safetyStock || 100) ? "재고부족" : "정상",
   }));
 
   // 입출고 기록
   const historyData = logs
     .map((log) => {
-      // 🔍 로그의 itemId로 자재 리스트에서 이름을 찾아옵니다.
+      // 로그의 itemId로 자재 리스트에서 이름을 찾아옵니다.
       const targetItem = items.find((i) => i.id === log.itemId);
 
       return {
         일시: log.timestamp,
-        자재명: targetItem ? targetItem.name : "삭제된 자재", // 이름 연결
+        제품명: targetItem ? targetItem.name : "삭제된 자재", // 이름 연결
         구분: log.type === "IN" ? "입고" : "출고",
         수량: log.quantity, // quantity로 이름 맞춤
         담당자: log.handler,
@@ -69,17 +80,17 @@ export const importInventoryFromExcel = (
         const jsonData = XLSX.utils.sheet_to_json(worksheet);
 
         // 엑셀 한글 헤더명을 매핑
-        const mappedData: InventoryItem[] = jsonData.map((row: any) => ({
-          id: String(
-            row["자재 ID"] ||
-              `ITEM-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
-          ),
-          name: String(row["자재명"] || "이름없음"),
-          spec: String(row["규격/스펙"] || "-"),
-          currentStock: Number(row["현재 재고"]) || 0,
-          unit: String(row["단위"] || "ea"),
-          safetyStock: Number(row["안전 재고"]) || 100,
-        }));
+        const mappedData: InventoryItem[] = (jsonData as ExcelRow[]).map(
+          (row) => ({
+            id: String(row["제품코드"] || "-"),
+            name: String(row["제품명"] || "이름없음"),
+            spec: String(row["규격"] || "-"),
+            currentStock: Number(row["현재 재고"]) || 0,
+            unit: String(row["단위"] || "ea"),
+            category: String(row["카테고리"] || "미분류"),
+            safetyStock: Number(row["안전 재고"]) || 100,
+          }),
+        );
 
         resolve(mappedData);
       } catch (error) {
