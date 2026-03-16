@@ -59,25 +59,35 @@ export const NewProductForm = () => {
 
   return (
     <section
-      style={{
-        marginBottom: "30px",
-        padding: "20px",
-        backgroundColor: "#f1f5f9",
-        borderRadius: "8px",
-      }}
+      // style={{
+      //   marginBottom: "30px",
+      //   padding: "20px",
+      //   backgroundColor: "#f1f5f9",
+      //   borderRadius: "8px",
+      // }}
+      className="mb-8 p-5 bg-slate-100 rounded-lg"
     >
-      <h2 style={{ marginTop: 0 }}>➕ 신규 제품 등록</h2>
+      <h2
+        // style={{ marginTop: 0 }}
+        className="mt-0 mb-4 text-xl font-bold text-slate-900"
+      >
+        ➕ 신규 제품 등록
+      </h2>
 
       {/* 전체를 form으로 감싸고 onSubmit을 연결하여 엔터키 지원 */}
       <form onSubmit={handleSaveProduct}>
         {/* 제품명 입력 */}
-        <div style={{ marginBottom: "15px" }}>
+        <div
+          // style={{ marginBottom: "15px" }}
+          className="mb-4"
+        >
           <label
-            style={{
-              display: "block",
-              fontWeight: "bold",
-              marginBottom: "5px",
-            }}
+            // style={{
+            //   display: "block",
+            //   fontWeight: "bold",
+            //   marginBottom: "5px",
+            // }}
+            className="block font-bold mb-1.5 text-slate-700"
           >
             제품명
           </label>
@@ -86,40 +96,42 @@ export const NewProductForm = () => {
             placeholder="ONE TOUCH ROTATE"
             value={productName}
             onChange={(e) => setProductName(e.target.value)}
-            style={{
-              width: "100%",
-              padding: "10px",
-              borderRadius: "4px",
-              border: "1px solid #cbd5e1",
-              boxSizing: "border-box",
-            }}
+            // style={{
+            //   width: "100%",
+            //   padding: "10px",
+            //   borderRadius: "4px",
+            //   border: "1px solid #cbd5e1",
+            //   boxSizing: "border-box",
+            // }}
+            className="w-full p-2 border border-slate-300 rounded focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
           />
         </div>
 
-        <hr
-          style={{
-            border: "0",
-            borderTop: "1px solid #bfdbfe",
-            margin: "20px 0",
-          }}
-        />
-
         {/* BOM 구성 */}
-        <div style={{ marginBottom: "15px" }}>
+        <div
+          // style={{ marginBottom: "15px" }}
+          className="mb-4"
+        >
           <label
-            style={{
-              display: "block",
-              fontWeight: "bold",
-              marginBottom: "5px",
-            }}
+            // style={{
+            //   display: "block",
+            //   fontWeight: "bold",
+            //   marginBottom: "5px",
+            // }}
+            className="block font-bold mb-1.5 text-slate-700"
           >
             자재 구성
           </label>
-          <div style={{ display: "flex", gap: "10px" }}>
+          <div
+            // style={{ display: "flex", gap: "10px" }}
+            className="flex gap-2.5"
+          >
+            {/* 자재 선택 */}
             <select
               value={selectedMaterialId}
               onChange={(e) => setSelectedMaterialId(e.target.value)}
-              style={{ flex: 2, padding: "8px" }}
+              // style={{ flex: 2, padding: "8px" }}
+              className="flex-[2] p-2 border border-slate-300 rounded bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
             >
               <option value="">자재 선택</option>
               {items.map((item) => (
@@ -128,45 +140,65 @@ export const NewProductForm = () => {
                 </option>
               ))}
             </select>
+
+            {/* 수량 입력 */}
             <input
               type="number"
               placeholder="수량"
               value={materialQuantity}
               onChange={(e) => setMaterialQuantity(Number(e.target.value))}
-              style={{ flex: 1, padding: "8px" }}
+              // style={{ flex: 1, padding: "8px" }}
+              className="flex-[1] p-2 border border-slate-300 rounded bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
             />
+
+            {/* 추가 버튼 */}
             <button
               type="button"
               onClick={handleAddBOM}
-              style={{ padding: "8px 15px", cursor: "pointer" }}
+              // style={{ padding: "8px 15px", cursor: "pointer" }}
+              className="px-3 py-1.5 bg-blue-500 text-white rounded font-bold hover:bg-blue-900 cursor-pointer transition-colors"
             >
               추가
             </button>
           </div>
         </div>
 
+        <hr
+          // style={{
+          //   border: "0",
+          //   borderTop: "1px solid #bfdbfe",
+          //   margin: "20px 0",
+          // }}
+          className="border-0 border-t border-blue-200 my-5"
+        />
+
         {/* 현재 추가된 BOM 목록 미리보기 */}
         <div
-          style={{
-            backgroundColor: "white",
-            padding: "10px",
-            borderRadius: "4px",
-            minHeight: "50px",
-            marginBottom: "20px",
-            border: "1px solid #cbd5e1",
-          }}
+          // style={{
+          //   backgroundColor: "white",
+          //   padding: "10px",
+          //   borderRadius: "4px",
+          //   minHeight: "50px",
+          //   marginBottom: "20px",
+          //   border: "1px solid #cbd5e1",
+          // }}
+          className="bg-white p-3 rounded border border-slate-300 min-h-[50px] mb-5 shadow-inner"
         >
           <p
-            style={{
-              margin: "0 0 10px 0",
-              fontSize: "0.85rem",
-              color: "#64748b",
-            }}
+            // style={{
+            //   margin: "0 0 10px 0",
+            //   fontSize: "0.85rem",
+            //   color: "#64748b",
+            // }}
+            className="m-0 mb-2 text-xs font-bold text-slate-500 uppercase tracking-wider"
           >
-            자재 :
+            포함된 자재 리스트 :
           </p>
           {bomList.length === 0 && (
-            <p style={{ fontSize: "0.85rem", color: "#94a3b8" }}>
+            <p
+              // style={{ fontSize: "0.85rem", color: "#94a3b8" }}
+              className="text-sm text-slate-400 italic"
+            >
               자재를 선택해주세요
             </p>
           )}
@@ -175,30 +207,39 @@ export const NewProductForm = () => {
             return (
               <div
                 key={index}
-                style={{
-                  fontSize: "0.9rem",
-                  borderBottom: "1px solid #f1f5f9",
-                  padding: "4px 0",
-                }}
+                // style={{
+                //   fontSize: "0.9rem",
+                //   borderBottom: "1px solid #f1f5f9",
+                //   padding: "4px 0",
+                // }}
+                className="text-sm border-b border-slate-50 last:border-0 py-1.5 flex justify-between items-center"
               >
-                • {material?.name} : <strong>{bom.quantity}</strong>개
+                <span className="text-slate-700 font-medium">
+                  • {material?.name}
+                </span>
+                <span className="text-slate-900">
+                  <strong className="text-emerald-600">{bom.quantity}</strong>{" "}
+                  개
+                </span>
               </div>
             );
           })}
         </div>
 
+        {/* 등록 버튼 */}
         <button
           type="submit"
-          style={{
-            width: "100%",
-            padding: "10px",
-            backgroundColor: "#10b981",
-            color: "white",
-            border: "none",
-            borderRadius: "4px",
-            fontWeight: "bold",
-            cursor: "pointer",
-          }}
+          // style={{
+          //   width: "100%",
+          //   padding: "10px",
+          //   backgroundColor: "#10b981",
+          //   color: "white",
+          //   border: "none",
+          //   borderRadius: "4px",
+          //   fontWeight: "bold",
+          //   cursor: "pointer",
+          // }}
+          className="w-full p-2.5 bg-emerald-500 text-white rounded font-bold hover:bg-emerald-600 transition-colors shadow-md active:scale-[0.99] cursor-pointer"
         >
           등록
         </button>

@@ -50,35 +50,44 @@ export const NewInventoryForm = () => {
 
   return (
     <section
-      style={{
-        marginBottom: "30px",
-        padding: "20px",
-        backgroundColor: "#f1f5f9",
-        borderRadius: "8px",
-      }}
+      // style={{
+      //   marginBottom: "30px",
+      //   padding: "20px",
+      //   backgroundColor: "#f1f5f9",
+      //   borderRadius: "8px",
+      // }}
+      className="mb-8 p-5 bg-slate-100 rounded-lg"
     >
-      <h2 style={{ marginTop: 0 }}>➕ 신규 자재 등록</h2>
+      <h2
+        // style={{ marginTop: 0 }}
+        className="mt-0 mb-4 text-xl font-bold text-slate-900"
+      >
+        ➕ 신규 자재 등록
+      </h2>
 
       <form
         onSubmit={handleAddItem}
-        style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr 1fr",
-          gap: "10px",
-        }}
+        // style={{
+        //   display: "grid",
+        //   gridTemplateColumns: "1fr 1fr 1fr",
+        //   gap: "10px",
+        // }}
+        className="grid grid-cols-3 gap-2.5"
       >
         {/* 입력창 */}
         <input
           placeholder="자재명"
           value={formData.name}
           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-          style={{ padding: "8px" }}
+          // style={{ padding: "8px" }}
+          className="p-2 border border-slate-300 rounded focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
         />
         <input
           placeholder="규격(Spec)"
           value={formData.spec}
           onChange={(e) => setFormData({ ...formData, spec: e.target.value })}
-          style={{ padding: "8px" }}
+          // style={{ padding: "8px" }}
+          className="p-2 border border-slate-300 rounded focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
         />
         <input
           type="number"
@@ -88,21 +97,24 @@ export const NewInventoryForm = () => {
           onChange={(e) =>
             setFormData({ ...formData, currentStock: Number(e.target.value) })
           }
-          style={{ padding: "8px" }}
+          // style={{ padding: "8px" }}
+          className="p-2 border border-slate-300 rounded focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
         />
 
+        {/* 등록 버튼 */}
         <button
           type="submit"
-          style={{
-            gridColumn: "span 3", // 3칸을 가득 채우기
-            padding: "10px",
-            backgroundColor: "#10b981",
-            color: "white",
-            border: "none",
-            borderRadius: "4px",
-            cursor: "pointer",
-            fontWeight: "bold",
-          }}
+          // style={{
+          //   gridColumn: "span 3", // 3칸을 가득 채우기
+          //   padding: "10px",
+          //   backgroundColor: "#10b981",
+          //   color: "white",
+          //   border: "none",
+          //   borderRadius: "4px",
+          //   cursor: "pointer",
+          //   fontWeight: "bold",
+          // }}
+          className="col-span-3 p-2.5 bg-emerald-500 text-white rounded font-bold hover:bg-emerald-600 transition-colors shadow-md active:scale-[0.99] cursor-pointer"
         >
           등록
         </button>

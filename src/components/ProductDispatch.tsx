@@ -47,47 +47,57 @@ export const ProductDispatch = () => {
 
   return (
     <section
-      style={{
-        marginBottom: "30px",
-        padding: "20px",
-        backgroundColor: "#f8fafc",
-        border: "2px solid #e2e8f0",
-        borderRadius: "8px",
-      }}
+    // style={{
+    //   marginBottom: "30px",
+    //   padding: "20px",
+    //   backgroundColor: "#f8fafc",
+    //   border: "2px solid #e2e8f0",
+    //   borderRadius: "8px",
+    // }}
+    // className="mb-8 p-5 bg-slate-50 border-2 border-slate-200 rounded-lg shadow-sm"
     >
       <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          marginBottom: "20px",
-        }}
+        // style={{
+        //   display: "flex",
+        //   justifyContent: "space-between",
+        //   marginBottom: "20px",
+        // }}
+        className="flex justify-between mb-5 items-center"
       >
-        <h2 style={{ marginTop: 0 }}>📦 완제품 출고</h2>
-
-        {/* 편집모드 버튼 */}
-        <button
-          onClick={() => setIsEditMode(!isEditMode)}
-          style={{
-            padding: "5px 10px",
-            fontSize: "0.8rem",
-            backgroundColor: isEditMode ? "#64748b" : "#ef4444",
-            color: "white",
-            border: "none",
-            borderRadius: "4px",
-            cursor: "pointer",
-          }}
+        <h2
+          // style={{ marginTop: 0 }}
+          className="mt-0 text-xl font-bold text-slate-900 flex items-center gap-2"
         >
-          {isEditMode ? "수정완료" : "수정하기"}
-        </button>
-      </div>
+          📦 완제품 출고
+        </h2>
 
-      {/* 🔍 검색창 연결 */}
-      <div style={{ marginBottom: "20px" }}>
-        <InventorySearch value={searchTerm} onChange={setSearchTerm} />
+        <div className="flex items-center gap-4">
+          {/* 편집모드 버튼 */}
+          <button
+            onClick={() => setIsEditMode(!isEditMode)}
+            // style={{
+            //   padding: "5px 10px",
+            //   fontSize: "0.8rem",
+            //   backgroundColor: isEditMode ? "#64748b" : "#ef4444",
+            //   color: "white",
+            //   border: "none",
+            //   borderRadius: "4px",
+            //   cursor: "pointer",
+            // }}
+            className={`px-3 py-1.5 text-xs font-bold text-white rounded cursor-pointer transition-colors ${isEditMode ? "bg-emerald-500" : "bg-red-500"}`}
+          >
+            {isEditMode ? "수정완료" : "수정하기"}
+          </button>
+          {/* 검색창 연결 */}
+          <InventorySearch value={searchTerm} onChange={setSearchTerm} />
+        </div>
       </div>
 
       {filteredProducts.length === 0 ? (
-        <p style={{ color: "#64748b", textAlign: "center", padding: "20px" }}>
+        <p
+          // style={{ color: "#64748b", textAlign: "center", padding: "20px" }}
+          className="text-slate-500 text-center py-5"
+        >
           {searchTerm
             ? "검색 결과와 일치하는 완제품이 없습니다."
             : "등록된 완제품이 없습니다. 제품을 먼저 등록해주세요."}
@@ -99,15 +109,93 @@ export const ProductDispatch = () => {
           return (
             <div
               key={product.id}
-              style={{
-                position: "relative",
-                padding: "15px",
-                backgroundColor: "white",
-                borderRadius: "8px",
-                border: "1px solid #e2e8f0",
-                marginBottom: "15px",
-              }}
+              // style={{
+              //   position: "relative",
+              //   padding: "15px",
+              //   backgroundColor: "white",
+              //   borderRadius: "8px",
+              //   border: "1px solid #e2e8f0",
+              //   marginBottom: "15px",
+              // }}
+              className="flex items-center justify-between p-4 mb-4 bg-white rounded-lg border border-slate-200 shadow-sm hover:border-blue-300 transition-colors"
             >
+              <div className="flex-1">
+                <p
+                  // style={{ fontSize: "0.9rem", color: "#64748b", marginTop: 0 }}
+                  className="text-sm text-slate-500 mt-0 mb-0"
+                >
+                  {/* 현장 관리자가 보기 편하게 제품 소모 규격을 상단에 노출 */}
+                  <span className="font-bold text-slate-800">
+                    {product.name}
+                  </span>{" "}
+                  - [
+                  {product.bom
+                    .map((b) => `${b.materialId} : ${b.quantity}ea`)
+                    .join(", ")}
+                  ]
+                </p>
+
+                <div
+                  // style={{ display: "flex", gap: "10px", alignItems: "center" }}
+                  className="flex flex-wrap gap-4 items-center"
+                >
+                  {/* 생산 수량 입력창 그룹 */}
+                  <div
+                    // style={{ display: "flex", alignItems: "center", gap: "5px" }}
+                    className="flex items-center gap-2"
+                  >
+                    <label
+                      htmlFor={`qty-${product.id}`}
+                      // style={{ fontWeight: "bold", fontSize: "0.9rem" }}
+                      className="font-bold text-sm text-slate-700"
+                    >
+                      생산 수량:
+                    </label>
+                    <input
+                      id={`qty-${product.id}`}
+                      type="number"
+                      min="1"
+                      value={currentAmount}
+                      // 입력창에 타이핑하면 숫자로 변환하여 해당 제품 ID의 수량으로 저장
+                      onChange={(e) =>
+                        handleAmountChange(product.id, Number(e.target.value))
+                      }
+                      // style={{
+                      //   width: "80px",
+                      //   padding: "8px",
+                      //   borderRadius: "4px",
+                      //   border: "1px solid #cbd5e1",
+                      //   textAlign: "right",
+                      // }}
+                      className="w-20 p-2 border border-slate-300 rounded text-right focus:ring-2 focus:ring-emerald-500 outline-none"
+                    />
+                    <span
+                      // style={{ fontWeight: "bold" }}
+                      className="font-bold text-slate-700"
+                    >
+                      대
+                    </span>
+                  </div>
+
+                  {/* 통합 출고 버튼 */}
+                  <button
+                    onClick={() => handleDispatch(product)}
+                    // style={{
+                    //   padding: "10px 20px",
+                    //   backgroundColor: "#3b82f6",
+                    //   color: "white",
+                    //   border: "none",
+                    //   borderRadius: "4px",
+                    //   cursor: "pointer",
+                    //   fontWeight: "bold",
+                    // }}
+                    className="px-3 py-1.5 bg-blue-600 text-white rounded font-bold hover:bg-blue-700 transition-colors shadow active:scale-[0.98] cursor-pointer"
+                  >
+                    생산
+                  </button>
+                </div>
+              </div>
+
               {/* 편집모드 시 삭제버튼 등장 */}
               {isEditMode && (
                 <button
@@ -118,95 +206,38 @@ export const ProductDispatch = () => {
                       removeProduct(product.id);
                     }
                   }}
-                  style={{
-                    position: "absolute",
-                    top: "-10px",
-                    right: "-10px",
-                    backgroundColor: "#ef4444",
-                    color: "white",
-                    border: "none",
-                    borderRadius: "50%",
-                    width: "24px",
-                    height: "24px",
-                    cursor: "pointer",
-                    fontWeight: "bold",
-                    boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
+                  // style={{
+                  //   position: "absolute",
+                  //   top: "-10px",
+                  //   right: "-10px",
+                  //   backgroundColor: "#ef4444",
+                  //   color: "white",
+                  //   border: "none",
+                  //   borderRadius: "50%",
+                  //   width: "24px",
+                  //   height: "24px",
+                  //   cursor: "pointer",
+                  //   fontWeight: "bold",
+                  //   boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                  //   display: "flex",
+                  //   alignItems: "center",
+                  //   justifyContent: "center",
+                  // }}
+                  className="ml-4 bg-red-500 text-white px-3 py-2 rounded font-bold hover:bg-red-600 cursor-pointer text-sm whitespace-nowrap"
                 >
-                  ×
+                  삭제
                 </button>
               )}
-
-              <p style={{ fontSize: "0.9rem", color: "#64748b", marginTop: 0 }}>
-                {/* 현장 관리자가 보기 편하게 제품 소모 규격을 상단에 노출 */}
-                <strong>{product.name}</strong> 1대당 [
-                {product.bom
-                  .map((b) => `자재ID ${b.materialId} ${b.quantity}개`)
-                  .join(", ")}
-                ] 소모
-              </p>
-
-              <div
-                style={{ display: "flex", gap: "10px", alignItems: "center" }}
-              >
-                {/* 생산 수량 입력창 그룹 */}
-                <div
-                  style={{ display: "flex", alignItems: "center", gap: "5px" }}
-                >
-                  <label
-                    htmlFor={`qty-${product.id}`}
-                    style={{ fontWeight: "bold", fontSize: "0.9rem" }}
-                  >
-                    생산 수량:
-                  </label>
-                  <input
-                    id={`qty-${product.id}`}
-                    type="number"
-                    min="1"
-                    value={currentAmount}
-                    // 입력창에 타이핑하면 숫자로 변환하여 해당 제품 ID의 수량으로 저장
-                    onChange={(e) =>
-                      handleAmountChange(product.id, Number(e.target.value))
-                    }
-                    style={{
-                      width: "80px",
-                      padding: "8px",
-                      borderRadius: "4px",
-                      border: "1px solid #cbd5e1",
-                      textAlign: "right",
-                    }}
-                  />
-                  <span style={{ fontWeight: "bold" }}>대</span>
-                </div>
-
-                {/* 통합 출고 버튼 */}
-                <button
-                  onClick={() => handleDispatch(product)}
-                  style={{
-                    padding: "10px 20px",
-                    backgroundColor: "#3b82f6",
-                    color: "white",
-                    border: "none",
-                    borderRadius: "4px",
-                    cursor: "pointer",
-                    fontWeight: "bold",
-                  }}
-                >
-                  {product.name} 생산 실행
-                </button>
-              </div>
 
               {/* 사용자가 수량을 입력하면 총 소모량을 미리 계산해서 보여줌 */}
               {currentAmount > 0 && (
                 <p
-                  style={{
-                    marginTop: "10px",
-                    fontSize: "0.8rem",
-                    color: "#ef4444",
-                  }}
+                  // style={{
+                  //   marginTop: "10px",
+                  //   fontSize: "0.8rem",
+                  //   color: "#ef4444",
+                  // }}
+                  className="mt-3 text-xs text-rose-500 font-medium"
                 >
                   * 생산 시 설정된 BOM에 따라 자재 재고가 자동 차감됩니다.
                 </p>

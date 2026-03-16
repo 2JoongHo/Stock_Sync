@@ -6,7 +6,7 @@ export interface InventoryItem {
   category: string; // 분류
   currentStock: number; // 현재 수량
   unit: string; // 단위
-  location: string; // 위치
+  location?: string; // 위치 (정하지 않아도 됨)
   safetyStock?: number; // 개별 위험 재고 기준 (없으면 일괄 기준 적용)
 }
 
