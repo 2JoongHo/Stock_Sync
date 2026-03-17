@@ -46,7 +46,7 @@ export const ProductDispatch = () => {
 
   // 검색 로직: 상황실에 있는 모든 완제품 중 검색어에 맞는 것만 필터링
   const filteredProducts = products.filter((p) =>
-    p.name.toLowerCase().includes(searchTerm.toLowerCase()),
+    p.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -99,7 +99,7 @@ export const ProductDispatch = () => {
                     <button
                       onClick={() =>
                         setExpandedId(
-                          expandedId === product.id ? null : product.id,
+                          expandedId === product.id ? null : product.id
                         )
                       }
                       className="text-xs font-bold text-blue-500 hover:text-blue-700 cursor-pointer bg-blue-50 px-2 py-1 rounded"
@@ -161,9 +161,6 @@ export const ProductDispatch = () => {
               {/* 제품 구성 상세 리스트 (클릭 시에만 보임) */}
               {expandedId === product.id && (
                 <div className="mt-4 p-4 bg-slate-50 rounded-md border border-slate-200 animate-in fade-in slide-in-from-top-2">
-                  {/* <h4 className="text-xs font-bold text-slate-500 mb-3 uppercase tracking-wider">
-                    자재 명세서 (BOM)
-                  </h4> */}
                   <div className="grid grid-cols-1 gap-x-6 gap-y-2">
                     {product.bom.map((b) => {
                       const material = items.find((i) => i.id === b.materialId);
@@ -183,13 +180,6 @@ export const ProductDispatch = () => {
                     })}
                   </div>
                 </div>
-              )}
-
-              {/* 사용자가 수량을 입력하면 총 소모량을 미리 계산해서 보여줌 */}
-              {currentAmount > 0 && (
-                <p className="mt-3 text-xs text-rose-500 font-medium font-bold">
-                  * 생산 시 설정된 BOM에 따라 자재 재고가 자동 차감됩니다.
-                </p>
               )}
             </div>
           );

@@ -44,7 +44,7 @@ export const StockLogs = () => {
                     <strong>
                       [{log.timestamp}] [{log.handler}]{" "}
                     </strong>
-                    {/* [추가] 완제품 출고 시 어떤 제품 때문인지 표시 */}
+                    {/* 완제품 출고 시 어떤 제품 때문인지 표시 */}
                     {log.productName && (
                       <span className="ml-2 text-[0.65rem] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded font-bold">
                         📦 {log.productName}
