@@ -6,6 +6,9 @@ export const StockLogs = () => {
   // Zustand에서 로그 리스트와 자재 마스터 정보를 모두 가져옴
   const { logs, items, cancelLog } = useInventoryStore();
 
+  // 최신순으로 정렬 후 10개만 표기
+  const displayLogs = [...logs].reverse().slice(0, 10);
+
   return (
     <section className="mt-10">
       <h2 className="m-0 text-xl font-bold">📜 최근 입출고 기록</h2>
@@ -13,13 +16,13 @@ export const StockLogs = () => {
       {/* 스크롤 가능한 로그 박스 */}
       <div className="max-h-[300px] overflow-y-auto bg-slate-100 p-4 rounded-lg border-slate-300">
         {/* 데이터가 없을 때 보여줄 안내 문구 */}
-        {logs.length === 0 && (
+        {displayLogs.length === 0 && (
           <p className="text-slate-500 italic">입출고 내역이 없습니다.</p>
         )}
 
         <div className="flex flex-col">
           {/* 최신순으로 정렬된 로그를 하나씩 화면에 출력 */}
-          {logs.map((log) => {
+          {displayLogs.map((log) => {
             // 데이터 조회
             // 만약 삭제된 자재라면 "삭제된 자재"라고 표시하여 오류를 방지
             const itemName =
@@ -53,7 +56,7 @@ export const StockLogs = () => {
                     // 실수를 방지하기 위한 안전장치
                     if (
                       window.confirm(
-                        `[${itemName}]의 해당 내역을 취소하고 재고를 원상복구하시겠습니까?`
+                        `[${itemName}]의 해당 내역을 취소하고 재고를 원상복구하시겠습니까?`,
                       )
                     ) {
                       cancelLog(log.id);

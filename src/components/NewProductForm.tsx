@@ -10,6 +10,7 @@ export const NewProductForm = () => {
 
   // 폼 입력 상태 관리
   const [productName, setProductName] = useState(""); // 완제품 이름
+  const [productId, setProductId] = useState(""); // 완제품 제품코드
   const [selectedMaterialId, setSelectedMaterialId] = useState(""); // 선택된 자재 ID
   const [materialQuantity, setMaterialQuantity] = useState<number>(0); // 선택된 자재의 소모량
   const [bomList, setBomList] = useState<BOMItem[]>([]); // 현재 조립 중인 BOM 리스트
@@ -43,8 +44,10 @@ export const NewProductForm = () => {
       return alert("제품명과 최소 하나 이상의 BOM 항목이 필요합니다.");
     }
 
+    const finalId = productId.trim();
+
     const newProduct: Product = {
-      id: `PROD-${Date.now()}`, // 고유 번호 생성
+      id: finalId, // 고유 번호 생성
       name: productName,
       bom: bomList,
     };
@@ -53,6 +56,7 @@ export const NewProductForm = () => {
 
     // 폼 초기화
     setProductName("");
+    setProductId("");
     setBomList([]);
     alert(`${productName}이(가) 등록되었습니다!`);
   };
@@ -66,13 +70,21 @@ export const NewProductForm = () => {
       {/* 전체를 form으로 감싸고 onSubmit을 연결하여 엔터키 지원 */}
       <form onSubmit={handleSaveProduct}>
         {/* 제품명 입력 */}
-        <div className="mb-4">
+        <div className="grid grid-cols-2 gap-2.5 mb-4">
           <input
             type="text"
             placeholder="제품명"
             value={productName}
             onChange={(e) => setProductName(e.target.value)}
-            className="w-full p-2 border border-slate-300 rounded focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
+            className="p-2 border border-slate-300 rounded focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
+          />
+          {/* 제품코드 입력 */}
+          <input
+            type="text"
+            placeholder="제품코드"
+            value={productId}
+            onChange={(e) => setProductId(e.target.value)}
+            className="p-2 border border-slate-300 rounded focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
           />
         </div>
 

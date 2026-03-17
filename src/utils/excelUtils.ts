@@ -17,7 +17,7 @@ interface ExcelRow {
 // 자재 현황과 입출고 기록을 한번에 엑셀로 내보내기
 export const exportFullInventoryReport = (
   items: InventoryItem[],
-  logs: StockLog[]
+  logs: StockLog[],
 ) => {
   // 오늘 날짜
   const now = new Date();
@@ -49,7 +49,7 @@ export const exportFullInventoryReport = (
 
       return {
         날짜: log.timestamp,
-        제품명: targetItem ? targetItem.name : "삭제된 자재",
+        자재명: targetItem ? targetItem.name : "삭제된 자재",
         제품코드: targetItem ? targetItem.id : log.itemId,
         구분: log.type === "IN" ? "입고" : "출고",
         수량: log.quantity,
@@ -77,7 +77,7 @@ export const exportFullInventoryReport = (
 
 // 엑셀 파일을 읽어서 자재 데이터 끌고오기
 export const importInventoryFromExcel = (
-  file: File
+  file: File,
 ): Promise<InventoryItem[]> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -102,7 +102,7 @@ export const importInventoryFromExcel = (
             unit: String(row["단위"] || "ea"),
             category: String(row["카테고리"] || "미분류"),
             safetyStock: Number(row["안전 재고"]) || 100,
-          })
+          }),
         );
 
         resolve(mappedData);

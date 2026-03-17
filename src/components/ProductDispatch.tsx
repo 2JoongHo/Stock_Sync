@@ -93,6 +93,9 @@ export const ProductDispatch = () => {
                     <span className="font-bold text-slate-800 text-lg">
                       {product.name}
                     </span>
+                    <div className="text-[0.7rem] text-slate-400 mt-0.5">
+                      {product.id}
+                    </div>
                     <button
                       onClick={() =>
                         setExpandedId(
