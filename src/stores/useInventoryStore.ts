@@ -1,185 +1,180 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware"; // 로컬저장을 위한 미들웨어
+import { supabase } from "../supabaseClient"; // 클라이언트 가져오기
 import type { InventoryItem, Product, StockLog } from "../types/inventory";
 
-// StockSync 중앙 상태 관리(Store) 인터페이스
 interface InventoryState {
-  items: InventoryItem[]; // 자재 마스터 데이터
-  logs: StockLog[]; // 입출고 이력 데이터
-  products: Product[]; // 완제품 리스트
-  // 담당자 이름
+  items: InventoryItem[];
+  logs: StockLog[];
+  products: Product[];
   userName: string;
-  // 담당자 이름 설정 함수
   setUserName: (name: string) => void;
-  setProducts: (newProducts: Product[]) => void; // 완제품 설정 함수
-  // 자재 리스트 초기화 또는 일괄 업데이트
-  setItems: (newItems: InventoryItem[]) => void;
-  // 단일 자재 수동 입출고
-  updateStock: (itemId: string, amount: number) => void;
-  // BOM 기반 완제품 단위 통합 출고
-  dispatchProduct: (product: Product, productAmount: number) => void;
-  // 완제품 추가 함수
-  addProduct: (newProduct: Product) => void;
-  // 자재 삭제 함수
-  removeItem: (itemId: string) => void;
-  // 완제품 삭제 함수
-  removeProduct: (productId: string) => void;
-  // 로그 삭제 함수
-  cancelLog: (logId: string) => void;
+
+  // DB에서 데이터 가져오기 (초기 로딩용)
+  fetchInitialData: () => Promise<void>;
+
+  // 자재 관련
+  updateStock: (itemId: string, amount: number) => Promise<void>;
+  addItem: (newItem: InventoryItem) => Promise<void>;
+  removeItem: (itemId: string) => Promise<void>;
+
+  // 완제품 관련
+  addProduct: (newProduct: Product) => Promise<void>;
+  removeProduct: (productId: string) => Promise<void>;
+  dispatchProduct: (product: Product, productAmount: number) => Promise<void>;
+
+  // 로그 관련
+  cancelLog: (logId: string) => Promise<void>;
 }
 
-export const useInventoryStore = create<InventoryState>()(
-  persist(
-    (set) => ({
-      // 초기 상태
-      items: [],
-      logs: [],
-      products: [],
-      userName: "",
-      setUserName: (name) => set({ userName: name }),
-      setProducts: (newProducts) => set({ products: newProducts }),
+export const useInventoryStore = create<InventoryState>((set, get) => ({
+  items: [],
+  logs: [],
+  products: [],
+  userName: localStorage.getItem("stocksync-user") || "", // 이름은 로컬에 저장
 
-      // 자재 마스터 데이터 설정
-      setItems: (newItems) => set({ items: newItems }),
+  setUserName: (name) => {
+    localStorage.setItem("stocksync-user", name);
+    set({ userName: name });
+  },
 
-      /**
-       * 단일 자재 입출고 처리
-       * @param itemId 자재 고유 ID
-       * @param amount 증감 수량 (입고: +, 출고: -)
-       */
-      updateStock: (itemId, amount) =>
-        set((state) => {
-          const item = state.items.find((i) => i.id === itemId);
-          if (!item) return state; // 자재가 없으면 상태 변경 없음
+  // [추가] 앱 시작 시 DB에서 데이터를 싹 긁어오는 함수
+  fetchInitialData: async () => {
+    const { data: items } = await supabase
+      .from("items")
+      .select("*")
+      .order("name");
+    const { data: products } = await supabase.from("products").select("*");
+    const { data: logs } = await supabase
+      .from("logs")
+      .select("*")
+      .order("id", { ascending: false })
+      .limit(100);
 
-          // 가용 재고 검증: 출고 시 현재 재고보다 많은 양을 뺄 수 없음
-          if (amount < 0 && item.currentStock + amount < 0) {
-            alert(`${item.name}의 재고가 부족하여 출고할 수 없습니다.`);
-            return state;
-          }
+    set({
+      items: items?.map((i) => ({ ...i, currentStock: i.current_stock })) || [], // DB 필드명 대응
+      products: products || [],
+      logs: logs || [],
+    });
+  },
 
-          // 이력 추적을 위한 로그 객체 생성
-          const newLog: StockLog = {
-            id: `LOG-${Date.now()}`,
-            itemId: itemId,
-            type: amount > 0 ? "IN" : "OUT",
-            quantity: Math.abs(amount),
-            timestamp: new Date().toLocaleString(),
-            handler: state.userName || "미지정",
-          };
+  // 단일 자재 입출고 (DB 반영)
+  updateStock: async (itemId, amount) => {
+    const { items, userName } = get();
+    const item = items.find((i) => i.id === itemId);
+    if (!item || (amount < 0 && item.currentStock + amount < 0)) return;
 
-          return {
-            // 불변성을 유지하며 해당 자재의 수량만 업데이트
-            items: state.items.map((i) =>
-              i.id === itemId
-                ? { ...i, currentStock: i.currentStock + amount }
-                : i
-            ),
-            // 최신 로그를 상단에 추가하고 최대 50개까지만 유지 (메모리 최적화)
-            logs: [newLog, ...state.logs].slice(0, 100), // 50에서 100으로 상향하여 데이터 유실 방지
-          };
-        }),
+    const newStock = item.currentStock + amount;
 
-      /**
-       * 완제품 출고 시 연결된 모든 하위 자재를 자동으로 차감 (BOM)
-       * @param product 완제품 정보 (내부에 BOM 리스트 포함)
-       * @param productAmount 생산/출고할 완제품 수량
-       */
-      dispatchProduct: (product, productAmount) =>
-        set((state) => {
-          // 모든 구성 자재의 재고가 충분한지 먼저 전수 확인 (Atomic Check)
-          for (const bomInfo of product.bom) {
-            const item = state.items.find((i) => i.id === bomInfo.materialId);
-            const totalRequired = bomInfo.quantity * productAmount; // 소요량 = 단위소요량 * 생산량
+    // DB의 자재 수량 업데이트
+    await supabase
+      .from("items")
+      .update({ current_stock: newStock })
+      .eq("id", itemId);
 
-            if (!item || item.currentStock < totalRequired) {
-              alert(
-                `재고 부족: [${item?.name || "알 수 없는 자재"}]이(가) 부족하여 ${product.name} 출고가 취소되었습니다.`
-              );
-              return state; // 단 하나라도 부족하면 전체 취소함
-            }
-          }
+    // DB에 로그 추가
+    const newLog: StockLog = {
+      id: `LOG-${Date.now()}`,
+      itemId: itemId,
+      type: amount > 0 ? "IN" : "OUT",
+      quantity: Math.abs(amount),
+      timestamp: new Date().toLocaleString(),
+      handler: userName || "미지정",
+    };
+    await supabase.from("logs").insert([newLog]);
 
-          // 재고 차감 처리 및 각 자재별 로그 생성
-          const newLogs: StockLog[] = [];
-          const updatedItems = state.items.map((item) => {
-            const bomInfo = product.bom.find((b) => b.materialId === item.id);
+    // 로컬 상태 갱신 (실시간성 확보)
+    await get().fetchInitialData();
+  },
 
-            if (bomInfo) {
-              const totalDeduction = bomInfo.quantity * productAmount;
+  // 완제품 출고 (BOM 자동 차감)
+  dispatchProduct: async (product, productAmount) => {
+    const { items, userName } = get();
 
-              // 각 자재별 출고 이력 생성
-              newLogs.push({
-                id: `LOG-${Date.now()}-${item.id}`,
-                itemId: item.id,
-                type: "OUT",
-                quantity: totalDeduction,
-                timestamp: new Date().toLocaleString(),
-                productName: product.name,
-                handler: state.userName || "미지정",
-              });
+    // 재고 검증
+    for (const bomInfo of product.bom) {
+      const item = items.find((i) => i.id === bomInfo.materialId);
+      const totalRequired = bomInfo.quantity * productAmount;
+      if (!item || item.currentStock < totalRequired) {
+        alert(`재고 부족: [${item?.name}]`);
+        return;
+      }
+    }
 
-              return {
-                ...item,
-                currentStock: item.currentStock - totalDeduction,
-              };
-            }
-            return item; // BOM에 포함되지 않은 자재는 그대로 유지
-          });
+    // 자재 차감 및 로그 생성 공정
+    for (const bomInfo of product.bom) {
+      const item = items.find((i) => i.id === bomInfo.materialId)!;
+      const deduction = bomInfo.quantity * productAmount;
+      const newStock = item.currentStock - deduction;
 
-          return {
-            items: updatedItems,
-            logs: [...newLogs, ...state.logs].slice(0, 100), // 10에서 100으로 상향하여 실시간 반영 오류 해결
-          };
-        }),
+      // DB 업데이트
+      await supabase
+        .from("items")
+        .update({ current_stock: newStock })
+        .eq("id", item.id);
+      await supabase.from("logs").insert([
+        {
+          id: `LOG-${Date.now()}-${item.id}`,
+          itemId: item.id,
+          type: "OUT",
+          quantity: deduction,
+          timestamp: new Date().toLocaleString(),
+          productName: product.name,
+          handler: userName || "미지정",
+        },
+      ]);
+    }
 
-      // 완제품 추가 로직
-      addProduct: (newProduct) =>
-        set((state) => ({
-          products: [...state.products, newProduct],
-        })),
+    await get().fetchInitialData();
+  },
 
-      // 자재 삭제 로직
-      removeItem: (itemId) =>
-        set((state) => ({
-          items: state.items.filter((item) => item.id !== itemId),
-        })),
+  // 완제품 추가
+  addProduct: async (newProduct) => {
+    await supabase.from("products").insert([newProduct]);
+    await get().fetchInitialData();
+  },
 
-      // 완제품 삭제 로직
-      removeProduct: (productId) =>
-        set((state) => ({
-          products: state.products.filter(
-            (product) => product.id !== productId
-          ),
-        })),
+  // 자재 추가 (기존 setItems 대체용)
+  addItem: async (newItem) => {
+    await supabase.from("items").insert([
+      {
+        id: newItem.id,
+        name: newItem.name,
+        spec: newItem.spec,
+        current_stock: newItem.currentStock,
+        unit: newItem.unit,
+        category: newItem.category,
+        safety_stock: newItem.safetyStock,
+      },
+    ]);
+    await get().fetchInitialData();
+  },
 
-      // 로그 삭제 로직
-      cancelLog: (logId) =>
-        set((state) => {
-          // 취소할 로그 찾기
-          const targetLog = state.logs.find((log) => log.id === logId);
-          if (!targetLog) return state;
+  removeItem: async (itemId) => {
+    await supabase.from("items").delete().eq("id", itemId);
+    await get().fetchInitialData();
+  },
 
-          // 재고 원상복구 계산 (입고 취소는 -, 출고 취소는 +)
-          const recoveryAmount =
-            targetLog.type === "IN" ? -targetLog.quantity : targetLog.quantity;
+  removeProduct: async (productId) => {
+    await supabase.from("products").delete().eq("id", productId);
+    await get().fetchInitialData();
+  },
 
-          // 해당 자재의 재고 업데이트
-          const updatedItems = state.items.map((item) =>
-            item.id === targetLog.itemId
-              ? { ...item, currentStock: item.currentStock + recoveryAmount }
-              : item
-          );
+  cancelLog: async (logId) => {
+    const { logs, items } = get();
+    const targetLog = logs.find((l) => l.id === logId);
+    if (!targetLog) return;
 
-          // 로그 목록에서 해당 로그 삭제
-          const updatedLogs = state.logs.filter((log) => log.id !== logId);
+    const recovery =
+      targetLog.type === "IN" ? -targetLog.quantity : targetLog.quantity;
+    const item = items.find((i) => i.id === targetLog.itemId);
 
-          return {
-            items: updatedItems,
-            logs: updatedLogs,
-          };
-        }),
-    }),
-    { name: "stocksync-storage" }
-  )
-);
+    if (item) {
+      await supabase
+        .from("items")
+        .update({ current_stock: item.currentStock + recovery })
+        .eq("id", item.id);
+      await supabase.from("logs").delete().eq("id", logId);
+    }
+    await get().fetchInitialData();
+  },
+}));

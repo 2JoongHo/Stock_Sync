@@ -28,6 +28,10 @@ function App() {
     }
   }, [userName, setUserName]);
 
+  useEffect(() => {
+    useInventoryStore.getState().fetchInitialData(); // DB 데이터를 불러옵니다.
+  }, []);
+
   return (
     <div className="p-5 max-w-4xl mx-auto font-sans bg-slate-50 min-h-screen">
       {/* 담당자 표시 */}
