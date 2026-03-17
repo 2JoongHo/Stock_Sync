@@ -8,7 +8,7 @@ import { importInventoryFromExcel } from "../utils/excelUtils";
 
 export const NewInventoryForm = () => {
   // Zustand에서 현재 자재 리스트와 리스트 업데이트 함수를 가져옴
-  const { items, setItems } = useInventoryStore();
+  const { addItem } = useInventoryStore();
 
   // 사용자가 입력 중인 폼 데이터를 실시간으로 저장
   // 입력을 시작하기 전의 깨끗한 상태
@@ -34,7 +34,9 @@ export const NewInventoryForm = () => {
         )
       ) {
         // 기존 데이터 뒤에 새 데이터 합치기
-        setItems([...items, ...importedItems]);
+        for (const item of importedItems) {
+          await addItem(item);
+        }
         alert("자재 목록을 성공적으로 불러왔습니다.");
       }
     } catch (error) {
@@ -46,7 +48,7 @@ export const NewInventoryForm = () => {
   };
 
   // 자재 등록 함수
-  const handleAddItem = (e: React.FormEvent) => {
+  const handleAddItem = async (e: React.FormEvent) => {
     // 폼 제출 시 페이지가 새로고침되는 브라우저의 기본 동작을 막음 (Single Page App 유지)
     e.preventDefault();
 
@@ -65,7 +67,7 @@ export const NewInventoryForm = () => {
     };
 
     // 리스트를 업데이트 (기본 자재 + 새 자재)
-    setItems([...items, newItem]);
+    await addItem(newItem);
 
     // 등록 성공 후 입력창들을 초기값으로
     setFormData({
