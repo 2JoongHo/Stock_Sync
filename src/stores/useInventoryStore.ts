@@ -37,7 +37,7 @@ export const useInventoryStore = create<InventoryState>((set, get) => ({
     set({ userName: name });
   },
 
-  // [추가] 앱 시작 시 DB에서 데이터를 싹 긁어오는 함수
+  // 앱 시작 시 DB에서 데이터를 싹 긁어오는 함수
   fetchInitialData: async () => {
     const { data: items } = await supabase
       .from("items")
@@ -51,9 +51,19 @@ export const useInventoryStore = create<InventoryState>((set, get) => ({
       .limit(100);
 
     set({
-      items: items?.map((i) => ({ ...i, currentStock: i.current_stock })) || [], // DB 필드명 대응
+      items:
+        items?.map((i) => ({
+          ...i,
+          currentStock: i.current_stock,
+          safetyStock: i.safety_stock,
+        })) || [], // DB 필드명 대응
       products: products || [],
-      logs: logs || [],
+      logs:
+        logs?.map((l) => ({
+          ...l,
+          itemId: l.item_id,
+          productName: l.product_name,
+        })) || [],
     });
   },
 
@@ -72,15 +82,16 @@ export const useInventoryStore = create<InventoryState>((set, get) => ({
       .eq("id", itemId);
 
     // DB에 로그 추가
-    const newLog: StockLog = {
-      id: `LOG-${Date.now()}`,
-      itemId: itemId,
-      type: amount > 0 ? "IN" : "OUT",
-      quantity: Math.abs(amount),
-      timestamp: new Date().toLocaleString(),
-      handler: userName || "미지정",
-    };
-    await supabase.from("logs").insert([newLog]);
+    await supabase.from("logs").insert([
+      {
+        id: `LOG-${Date.now()}`,
+        item_id: itemId, // DB 이름표 사용
+        type: amount > 0 ? "IN" : "OUT",
+        quantity: Math.abs(amount),
+        timestamp: new Date().toLocaleString(),
+        handler: userName || "미지정",
+      },
+    ]);
 
     // 로컬 상태 갱신 (실시간성 확보)
     await get().fetchInitialData();
@@ -107,18 +118,14 @@ export const useInventoryStore = create<InventoryState>((set, get) => ({
       const newStock = item.currentStock - deduction;
 
       // DB 업데이트
-      await supabase
-        .from("items")
-        .update({ current_stock: newStock })
-        .eq("id", item.id);
       await supabase.from("logs").insert([
         {
           id: `LOG-${Date.now()}-${item.id}`,
-          itemId: item.id,
+          item_id: item.id,
+          product_name: product.name, // DB 이름표 사용
           type: "OUT",
           quantity: deduction,
           timestamp: new Date().toLocaleString(),
-          productName: product.name,
           handler: userName || "미지정",
         },
       ]);
