@@ -7,7 +7,7 @@ import { StockLogs } from "./components/StockLogs";
 import { useInventoryStore } from "./stores/useInventoryStore";
 
 function App() {
-  const { items, setItems, userName, setUserName } = useInventoryStore();
+  const { userName, setUserName } = useInventoryStore();
 
   // 현재 폼 열림 관리 상태 (null은 모두 닫힘)
   const [activeForm, setActiveForm] = useState<"material" | "product" | null>(
