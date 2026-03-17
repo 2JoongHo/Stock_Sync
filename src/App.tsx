@@ -28,31 +28,6 @@ function App() {
     }
   }, [userName, setUserName]);
 
-  useEffect(() => {
-    // 초기 마스터 데이터 로드
-    if (items.length === 0) {
-      const initialData = [
-        {
-          id: "1",
-          name: "디스플레이",
-          currentStock: 10,
-          unit: "ea",
-          spec: "27인치",
-          category: "메인",
-        },
-        {
-          id: "2",
-          name: "볼트",
-          currentStock: 100,
-          unit: "ea",
-          spec: "M3",
-          category: "부자재",
-        },
-      ];
-      setItems(initialData);
-    }
-  }, []);
-
   return (
     <div className="p-5 max-w-4xl mx-auto font-sans bg-slate-50 min-h-screen">
       {/* 담당자 표시 */}
