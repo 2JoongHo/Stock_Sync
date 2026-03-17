@@ -14,6 +14,7 @@ export const NewInventoryForm = () => {
   // 입력을 시작하기 전의 깨끗한 상태
   const [formData, setFormData] = useState({
     name: "",
+    id: "",
     spec: "",
     location: "",
     currentStock: 0,
@@ -29,7 +30,7 @@ export const NewInventoryForm = () => {
       const importedItems = await importInventoryFromExcel(file);
       if (
         window.confirm(
-          `엑셀 파일에서 ${importedItems.length}개의 자재를 새로 추가하시겠습니까?`,
+          `엑셀 파일에서 ${importedItems.length}개의 자재를 새로 추가하시겠습니까?`
         )
       ) {
         // 기존 데이터 뒤에 새 데이터 합치기
@@ -52,10 +53,14 @@ export const NewInventoryForm = () => {
     // 데이터 검증: 필수 정보인 자재명이 비어있으면 중단 및 경고
     if (!formData.name) return alert("자재명을 입력해주세요.");
 
+    // ID 결정 로직: 입력값이 있으면 쓰고, 없으면 자동 생성
+    const finalId =
+      formData.id.trim() !== "" ? formData.id : `ITEM-${Date.now()}`;
+
     // 새로운 자재 객체 생성
     const newItem: InventoryItem = {
       ...formData, // 기존 입력값들을 그대로 복사
-      id: `ITEM-${Date.now()}`, // 등록 시점의 밀리초 숫자를 고유 ID로 활용
+      id: finalId, // 결정된 ID를 할당
       category: "부품", // 기본 카테고리 할당
     };
 
@@ -65,6 +70,7 @@ export const NewInventoryForm = () => {
     // 등록 성공 후 입력창들을 초기값으로
     setFormData({
       name: "",
+      id: "",
       spec: "",
       location: "",
       currentStock: 0,
@@ -93,12 +99,18 @@ export const NewInventoryForm = () => {
         </label>
       </div>
 
-      <form onSubmit={handleAddItem} className="grid grid-cols-3 gap-2.5">
+      <form onSubmit={handleAddItem} className="grid grid-cols-2 gap-2.5">
         {/* 입력창 */}
         <input
           placeholder="자재명"
           value={formData.name}
           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+          className="p-2 border border-slate-300 rounded focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
+        />
+        <input
+          placeholder="제품코드"
+          value={formData.id}
+          onChange={(e) => setFormData({ ...formData, id: e.target.value })}
           className="p-2 border border-slate-300 rounded focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
         />
         <input
@@ -121,7 +133,7 @@ export const NewInventoryForm = () => {
         {/* 등록 버튼 */}
         <button
           type="submit"
-          className="col-span-3 p-2.5 bg-emerald-500 text-white rounded font-bold hover:bg-emerald-600 transition-colors shadow-md active:scale-[0.99] cursor-pointer"
+          className="col-span-2 p-2.5 bg-emerald-500 text-white rounded font-bold hover:bg-emerald-600 transition-colors shadow-md active:scale-[0.99] cursor-pointer"
         >
           등록
         </button>

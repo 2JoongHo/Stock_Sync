@@ -17,6 +17,7 @@ export interface StockLog {
   quantity: number; // 수량
   type: "IN" | "OUT"; // 입고 / 출고
   timestamp: string; // 발생 시간
+  productName?: string;
   handler: string; // 담당자
 }
 

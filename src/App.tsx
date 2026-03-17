@@ -7,12 +7,26 @@ import { StockLogs } from "./components/StockLogs";
 import { useInventoryStore } from "./stores/useInventoryStore";
 
 function App() {
-  const { items, setItems } = useInventoryStore();
+  const { items, setItems, userName, setUserName } = useInventoryStore();
 
   // 현재 폼 열림 관리 상태 (null은 모두 닫힘)
   const [activeForm, setActiveForm] = useState<"material" | "product" | null>(
-    null,
+    null
   );
+
+  // 앱 접속 시 담당자 확인
+  useEffect(() => {
+    if (!userName) {
+      const inputName = prompt(
+        "입출고 담당자 성함을 입력해주세요.\n(이 이름은 이 기기의 모든 기록에 사용됩니다.)"
+      );
+      if (inputName && inputName.trim() !== "") {
+        setUserName(inputName.trim());
+      } else {
+        setUserName("제조팀");
+      }
+    }
+  }, [userName, setUserName]);
 
   useEffect(() => {
     // 초기 마스터 데이터 로드
@@ -41,6 +55,30 @@ function App() {
 
   return (
     <div className="p-5 max-w-4xl mx-auto font-sans bg-slate-50 min-h-screen">
+      {/* 담당자 표시 */}
+      <div className="flex justify-end mb-2">
+        <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-full shadow-sm border border-slate-200">
+          <span className="text-[0.7rem] font-bold text-slate-400 uppercase tracking-wider">
+            관리자
+          </span>
+          <span className="text-sm font-bold text-slate-700">
+            {userName || "확인 중..."}
+          </span>
+          <button
+            onClick={() => {
+              const newName = prompt(
+                "변경할 담당자 이름을 입력하세요.",
+                userName
+              );
+              if (newName) setUserName(newName);
+            }}
+            className="ml-1 text-[0.65rem] text-blue-500 hover:underline cursor-pointer"
+          >
+            변경
+          </button>
+        </div>
+      </div>
+
       <header className="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
           <h1 className="text-slate-900 text-4xl font-black tracking-tight">

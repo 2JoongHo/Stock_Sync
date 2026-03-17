@@ -7,6 +7,10 @@ interface InventoryState {
   items: InventoryItem[]; // 자재 마스터 데이터
   logs: StockLog[]; // 입출고 이력 데이터
   products: Product[]; // 완제품 리스트
+  // 담당자 이름
+  userName: string;
+  // 담당자 이름 설정 함수
+  setUserName: (name: string) => void;
   setProducts: (newProducts: Product[]) => void; // 완제품 설정 함수
   // 자재 리스트 초기화 또는 일괄 업데이트
   setItems: (newItems: InventoryItem[]) => void;
@@ -31,6 +35,8 @@ export const useInventoryStore = create<InventoryState>()(
       items: [],
       logs: [],
       products: [],
+      userName: "",
+      setUserName: (name) => set({ userName: name }),
       setProducts: (newProducts) => set({ products: newProducts }),
 
       // 자재 마스터 데이터 설정
@@ -59,7 +65,7 @@ export const useInventoryStore = create<InventoryState>()(
             type: amount > 0 ? "IN" : "OUT",
             quantity: Math.abs(amount),
             timestamp: new Date().toLocaleString(),
-            handler: "멍순이", // 임시 담당자
+            handler: state.userName || "미지정",
           };
 
           return {
@@ -67,7 +73,7 @@ export const useInventoryStore = create<InventoryState>()(
             items: state.items.map((i) =>
               i.id === itemId
                 ? { ...i, currentStock: i.currentStock + amount }
-                : i,
+                : i
             ),
             // 최신 로그를 상단에 추가하고 최대 50개까지만 유지 (메모리 최적화)
             logs: [newLog, ...state.logs].slice(0, 50),
@@ -88,7 +94,7 @@ export const useInventoryStore = create<InventoryState>()(
 
             if (!item || item.currentStock < totalRequired) {
               alert(
-                `재고 부족: [${item?.name || "알 수 없는 자재"}]이(가) 부족하여 ${product.name} 출고가 취소되었습니다.`,
+                `재고 부족: [${item?.name || "알 수 없는 자재"}]이(가) 부족하여 ${product.name} 출고가 취소되었습니다.`
               );
               return state; // 단 하나라도 부족하면 전체 취소함
             }
@@ -109,7 +115,8 @@ export const useInventoryStore = create<InventoryState>()(
                 type: "OUT",
                 quantity: totalDeduction,
                 timestamp: new Date().toLocaleString(),
-                handler: `BOM 출고 (${product.name})`,
+                productName: product.name,
+                handler: state.userName || "미지정",
               });
 
               return {
@@ -142,7 +149,7 @@ export const useInventoryStore = create<InventoryState>()(
       removeProduct: (productId) =>
         set((state) => ({
           products: state.products.filter(
-            (product) => product.id !== productId,
+            (product) => product.id !== productId
           ),
         })),
 
@@ -161,7 +168,7 @@ export const useInventoryStore = create<InventoryState>()(
           const updatedItems = state.items.map((item) =>
             item.id === targetLog.itemId
               ? { ...item, currentStock: item.currentStock + recoveryAmount }
-              : item,
+              : item
           );
 
           // 로그 목록에서 해당 로그 삭제
@@ -173,6 +180,6 @@ export const useInventoryStore = create<InventoryState>()(
           };
         }),
     }),
-    { name: "stocksync-storage" },
-  ),
+    { name: "stocksync-storage" }
+  )
 );

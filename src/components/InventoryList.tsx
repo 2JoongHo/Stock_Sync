@@ -13,6 +13,9 @@ export const InventoryList = () => {
   // 편집모드 상태
   const [isEditMode, setIsEditMode] = useState(false);
 
+  // 최신순으로 정렬 후 10개만 표기
+  const displayLogs = [...logs].reverse().slice(0, 10);
+
   const [searchTerm, setSearchTerm] = useState(""); // 검색어
   const GLOBAL_SAFETY_STOCK = 100; // 개별 설정이 없을 때 적용되는 공장 전체 안전 재고 기준
 
@@ -22,14 +25,14 @@ export const InventoryList = () => {
   const filteredItems = items.filter(
     (item) =>
       item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.spec.toLowerCase().includes(searchTerm.toLowerCase()),
+      item.spec.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   // 입출고 실행 함수
   const handleManualUpdate = (itemId: string, type: "IN" | "OUT") => {
     // 특정 자재의 입력창을 ID로 직접 찾아옴 (DOM 접근)
     const inputElement = document.getElementById(
-      `input-${itemId}`,
+      `input-${itemId}`
     ) as HTMLInputElement;
     const value = Number(inputElement.value);
 

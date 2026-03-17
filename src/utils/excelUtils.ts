@@ -17,8 +17,19 @@ interface ExcelRow {
 // 자재 현황과 입출고 기록을 한번에 엑셀로 내보내기
 export const exportFullInventoryReport = (
   items: InventoryItem[],
-  logs: StockLog[],
+  logs: StockLog[]
 ) => {
+  // 오늘 날짜
+  const now = new Date();
+  const today = `${now.getFullYear()}. ${now.getMonth() + 1}. ${now.getDate()}.`;
+
+  // 당일 발생한 입출고 내역만 필터링
+  const todayLogs = logs.filter((log) => {
+    // timestamp에서 날짜 부분만 가져와서 숫자 빼고 다 지우기 (예: 20260317)
+    const logDate = log.timestamp.split("오")[0].trim();
+    return logDate === today;
+  });
+
   // 자재 현황
   const inventoryData = items.map((item) => ({
     제품명: item.name,
@@ -31,17 +42,19 @@ export const exportFullInventoryReport = (
   }));
 
   // 입출고 기록
-  const historyData = logs
+  const historyData = todayLogs
     .map((log) => {
       // 로그의 itemId로 자재 리스트에서 이름을 찾아옵니다.
       const targetItem = items.find((i) => i.id === log.itemId);
 
       return {
-        일시: log.timestamp,
-        제품명: targetItem ? targetItem.name : "삭제된 자재", // 이름 연결
+        날짜: log.timestamp,
+        제품명: targetItem ? targetItem.name : "삭제된 자재",
+        제품코드: targetItem ? targetItem.id : log.itemId,
         구분: log.type === "IN" ? "입고" : "출고",
-        수량: log.quantity, // quantity로 이름 맞춤
-        담당자: log.handler,
+        수량: log.quantity,
+        완제품명: log.productName || "",
+        담당자: log.handler || "미지정",
       };
     })
     .reverse(); // 최신 기록이 위로 오게 정렬
@@ -64,7 +77,7 @@ export const exportFullInventoryReport = (
 
 // 엑셀 파일을 읽어서 자재 데이터 끌고오기
 export const importInventoryFromExcel = (
-  file: File,
+  file: File
 ): Promise<InventoryItem[]> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -89,7 +102,7 @@ export const importInventoryFromExcel = (
             unit: String(row["단위"] || "ea"),
             category: String(row["카테고리"] || "미분류"),
             safetyStock: Number(row["안전 재고"]) || 100,
-          }),
+          })
         );
 
         resolve(mappedData);

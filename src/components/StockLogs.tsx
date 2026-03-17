@@ -14,7 +14,7 @@ export const StockLogs = () => {
       <div className="max-h-[300px] overflow-y-auto bg-slate-100 p-4 rounded-lg border-slate-300">
         {/* 데이터가 없을 때 보여줄 안내 문구 */}
         {logs.length === 0 && (
-          <p className="text-slate-500 italic">아직 기록이 없습니다.</p>
+          <p className="text-slate-500 italic">입출고 내역이 없습니다.</p>
         )}
 
         <div className="flex flex-col">
@@ -34,12 +34,14 @@ export const StockLogs = () => {
                 <div className="flex-1">
                   {/* 발생 시간 / 담당자 정보 */}
                   <span>
-                    <strong>[{log.timestamp}]</strong> {log.handler}
+                    <strong>
+                      [{log.timestamp}] [{log.handler}]{" "}
+                    </strong>
                   </span>
 
                   {/* 입출고 내역 */}
                   <span>
-                    {itemName} {log.type === "IN" ? "입고" : "출고"}:{" "}
+                    {itemName} {log.type === "IN" ? "입고 " : "출고 "}:{" "}
                     {log.quantity}
                     ea
                   </span>
@@ -51,7 +53,7 @@ export const StockLogs = () => {
                     // 실수를 방지하기 위한 안전장치
                     if (
                       window.confirm(
-                        `[${itemName}]의 해당 내역을 취소하고 재고를 원상복구하시겠습니까?`,
+                        `[${itemName}]의 해당 내역을 취소하고 재고를 원상복구하시겠습니까?`
                       )
                     ) {
                       cancelLog(log.id);
