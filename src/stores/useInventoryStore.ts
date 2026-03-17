@@ -76,7 +76,7 @@ export const useInventoryStore = create<InventoryState>()(
                 : i
             ),
             // 최신 로그를 상단에 추가하고 최대 50개까지만 유지 (메모리 최적화)
-            logs: [newLog, ...state.logs].slice(0, 50),
+            logs: [newLog, ...state.logs].slice(0, 100), // 50에서 100으로 상향하여 데이터 유실 방지
           };
         }),
 
@@ -110,7 +110,7 @@ export const useInventoryStore = create<InventoryState>()(
 
               // 각 자재별 출고 이력 생성
               newLogs.push({
-                id: `LOG-BOM-${Date.now()}-${item.id}`,
+                id: `LOG-${Date.now()}-${item.id}`,
                 itemId: item.id,
                 type: "OUT",
                 quantity: totalDeduction,
@@ -129,7 +129,7 @@ export const useInventoryStore = create<InventoryState>()(
 
           return {
             items: updatedItems,
-            logs: [...newLogs, ...state.logs].slice(0, 10),
+            logs: [...newLogs, ...state.logs].slice(0, 100), // 10에서 100으로 상향하여 실시간 반영 오류 해결
           };
         }),
 

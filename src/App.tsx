@@ -11,14 +11,14 @@ function App() {
 
   // 현재 폼 열림 관리 상태 (null은 모두 닫힘)
   const [activeForm, setActiveForm] = useState<"material" | "product" | null>(
-    null,
+    null
   );
 
   // 앱 접속 시 담당자 확인
   useEffect(() => {
     if (!userName) {
       const inputName = prompt(
-        "입출고 담당자 성함을 입력해주세요.\n(이 이름은 이 기기의 모든 기록에 사용됩니다.)",
+        "입출고 담당자 성함을 입력해주세요.\n(이 이름은 이 기기의 모든 기록에 사용됩니다.)"
       );
       if (inputName && inputName.trim() !== "") {
         setUserName(inputName.trim());
@@ -68,7 +68,7 @@ function App() {
             onClick={() => {
               const newName = prompt(
                 "변경할 담당자 이름을 입력하세요.",
-                userName,
+                userName
               );
               if (newName) setUserName(newName);
             }}
@@ -101,7 +101,7 @@ function App() {
                 : "bg-white text-slate-700 border-slate-200 hover:border-slate-800"
             }`}
           >
-            {activeForm === "material" ? "✖️ 자재등록 닫기" : "➕ 자재등록"}
+            {activeForm === "material" ? "✖️ 자재등록" : "➕ 자재등록"}
           </button>
           <button
             onClick={() =>
@@ -113,7 +113,7 @@ function App() {
                 : "bg-white text-slate-700 border-slate-200 hover:border-slate-800"
             }`}
           >
-            {activeForm === "product" ? "✖️ 제품등록 닫기" : "➕ 제품등록"}
+            {activeForm === "product" ? "✖️ 제품등록" : "➕ 제품등록"}
           </button>
         </div>
       </header>
