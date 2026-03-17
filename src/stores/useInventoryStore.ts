@@ -117,6 +117,11 @@ export const useInventoryStore = create<InventoryState>((set, get) => ({
       const deduction = bomInfo.quantity * productAmount;
       const newStock = item.currentStock - deduction;
 
+      await supabase
+        .from("items")
+        .update({ current_stock: newStock })
+        .eq("id", item.id);
+
       // DB 업데이트
       await supabase.from("logs").insert([
         {
