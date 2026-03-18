@@ -20,11 +20,14 @@ export const ProductDispatch = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
   // 각 제품별 생산 수량을 관리하기 위한 바구니 (ID별로 수량 저장)
-  const [amounts, setAmounts] = useState<{ [key: string]: number }>({});
+  const [amounts, setAmounts] = useState<{ [key: string]: number | undefined }>(
+    {},
+  );
 
   // 개별 제품의 수량을 변경하는 함수
-  const handleAmountChange = (productId: string, value: number) => {
-    setAmounts((prev) => ({ ...prev, [productId]: value }));
+  const handleAmountChange = (productId: string, value: string) => {
+    const numValue = value === "" ? undefined : Number(value);
+    setAmounts((prev) => ({ ...prev, [productId]: numValue }));
   };
 
   // 생산 실행 핸들러
@@ -40,13 +43,13 @@ export const ProductDispatch = () => {
     // 선택된 제품과 입력된 수량을 전달하면 모든 자재를 한꺼번에 차감
     dispatchProduct(product, dispatchAmount);
 
-    // 입력창을 다시 0으로 초기화
-    handleAmountChange(product.id, 0);
+    // 입력창을 다시 placeholder로 초기화
+    setAmounts((prev) => ({ ...prev, [product.id]: undefined }));
   };
 
   // 검색 로직: 상황실에 있는 모든 완제품 중 검색어에 맞는 것만 필터링
   const filteredProducts = products.filter((p) =>
-    p.name.toLowerCase().includes(searchTerm.toLowerCase())
+    p.name.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   return (
@@ -80,7 +83,7 @@ export const ProductDispatch = () => {
         </p>
       ) : (
         filteredProducts.map((product) => {
-          const currentAmount = amounts[product.id] || 0;
+          const currentAmount = amounts[product.id] || "";
 
           return (
             <div
@@ -99,7 +102,7 @@ export const ProductDispatch = () => {
                     <button
                       onClick={() =>
                         setExpandedId(
-                          expandedId === product.id ? null : product.id
+                          expandedId === product.id ? null : product.id,
                         )
                       }
                       className="text-xs font-bold text-blue-500 hover:text-blue-700 cursor-pointer bg-blue-50 px-2 py-1 rounded"
@@ -122,11 +125,12 @@ export const ProductDispatch = () => {
                       <input
                         id={`qty-${product.id}`}
                         type="number"
+                        placeholder="수량"
                         min="1"
                         value={currentAmount}
                         // 입력창에 타이핑하면 숫자로 변환하여 해당 제품 ID의 수량으로 저장
                         onChange={(e) =>
-                          handleAmountChange(product.id, Number(e.target.value))
+                          handleAmountChange(product.id, e.target.value)
                         }
                         className="w-20 p-2 border border-slate-300 rounded text-right focus:ring-2 focus:ring-emerald-500 outline-none"
                       />

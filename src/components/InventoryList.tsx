@@ -144,6 +144,7 @@ export const InventoryList = () => {
                     id={`input-${item.id}`}
                     type="number"
                     placeholder="수량"
+                    min="1"
                     className="w-20 p-1.5 border border-slate-300 rounded text-right focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                   <button
