@@ -5,9 +5,10 @@ import { NewProductForm } from "./components/NewProductForm";
 import { ProductDispatch } from "./components/ProductDispatch";
 import { StockLogs } from "./components/StockLogs";
 import { useInventoryStore } from "./stores/useInventoryStore";
+import { supabase } from "./supabaseClient";
 
 function App() {
-  const { userName, setUserName } = useInventoryStore();
+  const { userName, setUserName, fetchInitialData } = useInventoryStore();
 
   // 현재 폼 열림 관리 상태 (null은 모두 닫힘)
   const [activeForm, setActiveForm] = useState<"material" | "product" | null>(
@@ -29,8 +30,27 @@ function App() {
   }, [userName, setUserName]);
 
   useEffect(() => {
-    useInventoryStore.getState().fetchInitialData(); // DB 데이터를 불러옵니다.
-  }, []);
+    // 앱 켜지자마자 데이터 한 번 긁어오기
+    fetchInitialData();
+
+    // 슈파베이스 실시간 감시 채널 개설
+    const channel = supabase
+      .channel("realtime-inventory") // 채널 이름
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public" }, // public 스키마의 모든 변화(*) 감지
+        (payload) => {
+          console.log("DB 변경 감지", payload);
+          fetchInitialData(); // 변화가 생기면 즉시 다시 긁어오기
+        }
+      )
+      .subscribe();
+
+    // 컴포넌트가 꺼질 때(언마운트) 구독 해제해서 메모리 아끼기
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [fetchInitialData]);
 
   return (
     <div className="p-5 max-w-4xl mx-auto font-sans bg-slate-50 min-h-screen">
