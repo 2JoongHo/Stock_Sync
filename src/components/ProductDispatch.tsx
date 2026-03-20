@@ -69,7 +69,7 @@ export const ProductDispatch = () => {
           </button>
 
           {/* 검색창 연결 */}
-          <div className="flex-1 md:w-64">
+          <div className="flex-1 md:flex-none md:w-64">
             <InventorySearch value={searchTerm} onChange={setSearchTerm} />
           </div>
         </div>

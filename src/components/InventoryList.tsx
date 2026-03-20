@@ -46,25 +46,22 @@ export const InventoryList = () => {
   return (
     <section className="mt-5">
       <div className="flex flex-col md:flex-row md:justify-between items-start md:items-center mb-5 gap-4">
-        <h2 className="m-0 text-xl font-bold text-slate-900 flex items-center gap-2">
-          📊 실시간 자재 현황
-        </h2>
+        <div className="flex items-center justify-between w-full md:w-auto md:gap-3">
+          <h2 className="m-0 text-xl font-bold text-slate-900 flex items-center gap-2">
+            📊 실시간 자재 현황
+          </h2>
+          {/* 엑셀 내보내기 버튼 */}
+          <button
+            onClick={() => exportFullInventoryReport(items, logs)}
+            className="flex items-center justify-center w-9 h-9 bg-emerald-500 text-white rounded font-bold cursor-pointer hover:bg-emerald-600 transition-all shadow-sm"
+          >
+            <img src={downloadIcon} alt="download" className="w-5 h-5 invert" />
+          </button>
+        </div>
 
-        {/* 오른쪽 정렬 그룹: 엑셀버튼 + 수정버튼 + 검색창 */}
+        {/* 오른쪽 정렬 그룹: 수정버튼 + 검색창 */}
         <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
           <div className="flex items-center gap-2">
-            {/* 엑셀 내보내기 버튼 */}
-            <button
-              onClick={() => exportFullInventoryReport(items, logs)}
-              className="flex items-center justify-center w-9 h-9 bg-emerald-500 text-white rounded font-bold cursor-pointer hover:bg-emerald-600 transition-all shadow-sm"
-            >
-              <img
-                src={downloadIcon}
-                alt="download"
-                className="w-5 h-5 invert"
-              />
-            </button>
-
             {/* 자재 관리 모드 버튼 */}
             <button
               onClick={() => setIsEditMode(!isEditMode)}
@@ -75,7 +72,7 @@ export const InventoryList = () => {
           </div>
 
           {/* 검색창 */}
-          <div className="flex-1 min-w-[150px] md:w-64">
+          <div className="flex-1 md:flex-none md:w-64">
             <InventorySearch value={searchTerm} onChange={setSearchTerm} />
           </div>
         </div>
