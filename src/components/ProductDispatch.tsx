@@ -54,24 +54,24 @@ export const ProductDispatch = () => {
 
   return (
     <section>
-      <div className="flex justify-between mb-5 items-center">
-        <h2 className="mt-0 text-xl font-bold text-slate-900 flex items-center gap-2">
+      <div className="flex flex-col md:flex-row md:justify-between mb-5 gap-4 md:items-center">
+        <h2 className="m-0 text-xl font-bold text-slate-900 flex items-center gap-2">
           📦 완제품 출고
         </h2>
 
-        <div className="flex items-center gap-4">
-          <div className="flex items-center">
-            {/* 편집모드 버튼 */}
-            <button
-              onClick={() => setIsEditMode(!isEditMode)}
-              className={`h-9 px-3 py-1.5 rounded font-bold text-xs transition-colors cursor-pointer text-white ${isEditMode ? "bg-emerald-500" : "bg-red-500"}`}
-            >
-              {isEditMode ? "수정완료" : "수정하기"}
-            </button>
-          </div>
+        <div className="flex items-center gap-2 w-full md:w-auto">
+          {/* 편집모드 버튼 */}
+          <button
+            onClick={() => setIsEditMode(!isEditMode)}
+            className={`h-9 px-4 rounded font-bold text-xs transition-colors cursor-pointer text-white flex-shrink-0 ${isEditMode ? "bg-emerald-500" : "bg-red-500"}`}
+          >
+            {isEditMode ? "수정완료" : "수정하기"}
+          </button>
 
           {/* 검색창 연결 */}
-          <InventorySearch value={searchTerm} onChange={setSearchTerm} />
+          <div className="flex-1 md:w-64">
+            <InventorySearch value={searchTerm} onChange={setSearchTerm} />
+          </div>
         </div>
       </div>
 
@@ -112,41 +112,10 @@ export const ProductDispatch = () => {
                         : "▼ 제품 구성"}
                     </button>
                   </div>
-
-                  {/* 생산 수량 입력 및 버튼 (한 줄로 정렬) */}
-                  <div className="flex flex-wrap gap-4 items-center mt-2">
-                    <div className="flex items-center gap-2">
-                      <label
-                        htmlFor={`qty-${product.id}`}
-                        className="font-bold text-sm text-slate-700"
-                      >
-                        생산 수량 :
-                      </label>
-                      <input
-                        id={`qty-${product.id}`}
-                        type="number"
-                        placeholder="수량"
-                        min="1"
-                        value={currentAmount}
-                        // 입력창에 타이핑하면 숫자로 변환하여 해당 제품 ID의 수량으로 저장
-                        onChange={(e) =>
-                          handleAmountChange(product.id, e.target.value)
-                        }
-                        className="w-20 p-2 border border-slate-300 rounded text-right focus:ring-2 focus:ring-emerald-500 outline-none"
-                      />
-                      <span className="font-bold text-slate-700">대</span>
-                    </div>
-                    <button
-                      onClick={() => handleDispatch(product)}
-                      className="px-4 py-2 bg-blue-600 text-white rounded font-bold hover:bg-blue-700 shadow active:scale-[0.98] cursor-pointer text-sm"
-                    >
-                      생산
-                    </button>
-                  </div>
                 </div>
 
-                {/* 편집모드 시 삭제버튼 등장 */}
-                {isEditMode && (
+                {/* 편집 시 삭제버튼 등장 */}
+                {isEditMode ? (
                   <button
                     onClick={() => {
                       if (
@@ -155,10 +124,31 @@ export const ProductDispatch = () => {
                         removeProduct(product.id);
                       }
                     }}
-                    className="ml-4 bg-red-500 text-white px-3 py-2 rounded font-bold hover:bg-red-600 cursor-pointer text-sm whitespace-nowrap"
+                    className="h-9 px-3 bg-red-500 text-white rounded font-bold hover:bg-red-600 cursor-pointer text-sm whitespace-nowrap"
                   >
                     삭제
                   </button>
+                ) : (
+                  // 일반 모드일 때: 기존 '수량 입력 + 생산' 버튼 노출
+                  <div className="flex items-center gap-2">
+                    <input
+                      id={`qty-${product.id}`}
+                      type="number"
+                      placeholder="수량"
+                      min="1"
+                      value={currentAmount}
+                      onChange={(e) =>
+                        handleAmountChange(product.id, e.target.value)
+                      }
+                      className="w-20 h-9 p-1.5 border border-slate-300 rounded text-right focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                    />
+                    <button
+                      onClick={() => handleDispatch(product)}
+                      className="h-9 px-3 bg-blue-600 text-white rounded font-bold hover:bg-blue-700 shadow active:scale-[0.98] cursor-pointer text-sm whitespace-nowrap"
+                    >
+                      생산
+                    </button>
+                  </div>
                 )}
               </div>
 

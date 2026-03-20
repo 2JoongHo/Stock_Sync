@@ -4,7 +4,7 @@
 
 > **8년의 현장 관리 노하우를 담아, 수동 재고 관리의 병목을 실시간 데이터 기술로 해결한 제조 최적화 솔루션**
 >
-> 🔗 [StockSync 바로가기](https://stocksync-v2.vercel.app/ "StockSync")
+> 🔗 [StockSync 바로가기](https://stock-sync-umber.vercel.app// "StockSync")
 
 ---
 
@@ -53,23 +53,30 @@ src/
  ┣ 📂 util         # 공통 함수 및 날짜 포맷팅 로직
  ┣ 📜 App.tsx      # 메인 대시보드 레이아웃 및 실시간 채널 설정
  ┗ 📜 supabaseClient.ts # 백엔드 연동 및 API 설정
+```
 
 ---
 
 ## 💻 실행 방법 (Getting Started)
+
 ### 저장소 클론 (Clone)
+
 ```
 
 git clone https://github.com/2JoongHo/Stock_Sync.git
 
 ```
+
 ### 의존성 설치 (Install)
+
 ```
 
 npm install
 
 ```
+
 ### 환경 변수 설정 (.env)
+
 ```
 
 VITE_SUPABASE_URL=YOUR_SUPABASE_URL
@@ -78,6 +85,9 @@ VITE_SUPABASE_ANON_KEY=YOUR_SUPABASE_ANON_KEY
 ```
 
 ### 로컬 실행 (Run)
+
 ```
 
 npm run dev
+
+```

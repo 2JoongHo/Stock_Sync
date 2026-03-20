@@ -45,13 +45,13 @@ export const InventoryList = () => {
 
   return (
     <section className="mt-5">
-      <div className="flex justify-between items-center mb-5">
+      <div className="flex flex-col md:flex-row md:justify-between items-start md:items-center mb-5 gap-4">
         <h2 className="m-0 text-xl font-bold text-slate-900 flex items-center gap-2">
           📊 실시간 자재 현황
         </h2>
 
         {/* 오른쪽 정렬 그룹: 엑셀버튼 + 수정버튼 + 검색창 */}
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
           <div className="flex items-center gap-2">
             {/* 엑셀 내보내기 버튼 */}
             <button
@@ -75,7 +75,9 @@ export const InventoryList = () => {
           </div>
 
           {/* 검색창 */}
-          <InventorySearch value={searchTerm} onChange={setSearchTerm} />
+          <div className="flex-1 min-w-[150px] md:w-64">
+            <InventorySearch value={searchTerm} onChange={setSearchTerm} />
+          </div>
         </div>
       </div>
 
@@ -155,7 +157,7 @@ export const InventoryList = () => {
                   </button>
                   <button
                     onClick={() => handleManualUpdate(item.id, "OUT")}
-                    className="bg-red-500 text-white px-3 py-2 rounded font-bold hover:bg-red-600 cursor-pointer text-sm"
+                    className="bg-orange-500 text-white px-3 py-2 rounded font-bold hover:bg-orange-600 cursor-pointer text-sm"
                   >
                     출고
                   </button>
