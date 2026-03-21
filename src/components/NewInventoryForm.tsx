@@ -4,7 +4,7 @@ import { useState } from "react";
 import uploadIcon from "../assets/uploadIcon.svg";
 import { useInventoryStore } from "../stores/useInventoryStore";
 import type { InventoryItem } from "../types/inventory";
-import { importInventoryFromExcel } from "../utils/excelUtils";
+import { importInventoryFromExcel } from "../utils/excelUtils"; // 엑셀로 불러오기
 
 export const NewInventoryForm = () => {
   // Zustand에서 현재 자재 리스트와 리스트 업데이트 함수를 가져옴
@@ -30,7 +30,7 @@ export const NewInventoryForm = () => {
       const importedItems = await importInventoryFromExcel(file);
       if (
         window.confirm(
-          `엑셀 파일에서 ${importedItems.length}개의 자재를 새로 추가하시겠습니까?`
+          `엑셀 파일에서 ${importedItems.length}개의 자재를 새로 추가하시겠습니까?`,
         )
       ) {
         // 기존 데이터 뒤에 새 데이터 합치기

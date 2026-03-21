@@ -68,7 +68,7 @@ export const StockLogs = () => {
                     // 실수를 방지하기 위한 안전장치
                     if (
                       window.confirm(
-                        `[${itemName}]의 해당 내역을 취소하고 재고를 원상복구하시겠습니까?`
+                        `[${itemName}]의 해당 내역을 취소하고 재고를 원상복구하시겠습니까?`,
                       )
                     ) {
                       cancelLog(log.id);
