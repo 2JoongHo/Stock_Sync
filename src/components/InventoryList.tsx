@@ -149,13 +149,13 @@ export const InventoryList = () => {
                   />
                   <button
                     onClick={() => handleManualUpdate(item.id, "IN")}
-                    className="bg-emerald-500 text-white px-3 py-2 rounded font-bold hover:bg-emerald-600 cursor-pointer text-sm"
+                    className="bg-blue-600 text-white px-3 py-2 rounded font-bold hover:bg-blue-900 cursor-pointer text-sm"
                   >
                     입고
                   </button>
                   <button
                     onClick={() => handleManualUpdate(item.id, "OUT")}
-                    className="bg-orange-500 text-white px-3 py-2 rounded font-bold hover:bg-orange-600 cursor-pointer text-sm"
+                    className="bg-orange-600 text-white px-3 py-2 rounded font-bold hover:bg-orange-900 cursor-pointer text-sm"
                   >
                     출고
                   </button>

@@ -1,5 +1,7 @@
 // 헤더 컴포넌트
 
+import LockIcon from "../assets/lockIcon.svg";
+import UnlockIcon from "../assets/unlockIcon.svg";
 import { useInventoryStore } from "../stores/useInventoryStore";
 
 export const Header = () => {
@@ -15,7 +17,7 @@ export const Header = () => {
   return (
     <header className="p-4 md:p-8 max-w-6xl mx-auto font-sans bg-slate-50">
       {/* 담당자 표시 */}
-      <div className="flex justify-end mb-4">
+      <div className="flex justify-end mb-4 gap-3">
         <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-full shadow-sm border border-slate-200">
           <span className="text-[0.65rem] md:text-[0.7rem] font-bold text-slate-400 uppercase tracking-wider">
             관리자
@@ -42,11 +44,15 @@ export const Header = () => {
           onClick={toggleEditMode}
           className={`h-9 px-4 rounded-full font-bold text-xs transition-all shadow-md cursor-pointer ${
             isEditMode
-              ? "bg-amber-500 text-white animate-pulse"
+              ? "bg-red-500 text-white animate-pulse"
               : "bg-slate-700 text-slate-300"
           }`}
         >
-          {isEditMode ? "🔓 관리 모드" : "🔒 관리 모드"}
+          {isEditMode ? (
+            <img src={UnlockIcon} alt="unlock" className="w-5 h-5 invert" />
+          ) : (
+            <img src={LockIcon} alt="lock" className="w-5 h-5 invert" />
+          )}
         </button>
       </div>
 

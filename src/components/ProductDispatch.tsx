@@ -93,11 +93,13 @@ export const ProductDispatch = () => {
               <div className="flex items-center justify-between w-full">
                 <div className="flex-1">
                   <div className="flex items-center gap-3">
-                    <span className="font-bold text-slate-800 text-lg">
-                      {product.name}
-                    </span>
-                    <div className="text-[0.7rem] text-slate-400 mt-0.5">
-                      {product.id}
+                    <div className="flex flex-col">
+                      <span className="font-bold text-slate-800 text-lg">
+                        {product.name}
+                      </span>
+                      <div className="text-[0.7rem] text-slate-400 mt-0.5">
+                        {product.id}
+                      </div>
                     </div>
                     <button
                       onClick={() =>
@@ -144,7 +146,7 @@ export const ProductDispatch = () => {
                     />
                     <button
                       onClick={() => handleDispatch(product)}
-                      className="h-9 px-3 bg-blue-600 text-white rounded font-bold hover:bg-blue-700 shadow active:scale-[0.98] cursor-pointer text-sm whitespace-nowrap"
+                      className="h-9 px-3 bg-emerald-600 text-white rounded font-bold hover:bg-emerald-900 shadow active:scale-[0.98] cursor-pointer text-sm whitespace-nowrap"
                     >
                       생산
                     </button>
