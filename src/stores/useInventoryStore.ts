@@ -24,6 +24,13 @@ interface InventoryState {
 
   // 로그 관련
   cancelLog: (logId: string) => Promise<void>;
+
+  // 편집모드
+  isEditMode: boolean;
+  toggleEditMode: () => void;
+
+  activeForm: "material" | "product" | null;
+  setActiveForm: (form: "material" | "product" | null) => void;
 }
 
 export const useInventoryStore = create<InventoryState>((set, get) => ({
@@ -189,4 +196,13 @@ export const useInventoryStore = create<InventoryState>((set, get) => ({
     }
     await get().fetchInitialData();
   },
+
+  isEditMode: false,
+  toggleEditMode: () => set((state) => ({ isEditMode: !state.isEditMode })),
+
+  activeForm: null,
+  setActiveForm: (form) =>
+    set((state) => ({
+      activeForm: state.activeForm === form ? null : form,
+    })),
 }));

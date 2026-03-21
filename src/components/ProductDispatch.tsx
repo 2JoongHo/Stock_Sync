@@ -7,11 +7,11 @@ import type { Product } from "../types/inventory";
 
 export const ProductDispatch = () => {
   // Zustand에서 완제품 목록(products)과 생산 실행 함수를 가져옴
-  const { products, items, dispatchProduct, removeProduct } =
+  const { products, items, dispatchProduct, removeProduct, isEditMode } =
     useInventoryStore();
 
   // 편집모드 상태
-  const [isEditMode, setIsEditMode] = useState(false);
+  // const [isEditMode, setIsEditMode] = useState(false);
 
   // 펼쳤을 때 상태
   const [expandedId, setExpandedId] = useState<string | null>(null);
@@ -61,12 +61,12 @@ export const ProductDispatch = () => {
 
         <div className="flex items-center gap-2 w-full md:w-auto">
           {/* 편집모드 버튼 */}
-          <button
+          {/* <button
             onClick={() => setIsEditMode(!isEditMode)}
             className={`h-9 px-4 rounded font-bold text-xs transition-colors cursor-pointer text-white flex-shrink-0 ${isEditMode ? "bg-emerald-500" : "bg-red-500"}`}
           >
             {isEditMode ? "수정완료" : "수정하기"}
-          </button>
+          </button> */}
 
           {/* 검색창 연결 */}
           <div className="flex-1 md:flex-none md:w-64">
