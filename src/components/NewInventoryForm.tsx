@@ -17,7 +17,7 @@ export const NewInventoryForm = () => {
     id: "",
     spec: "",
     location: "",
-    currentStock: 0,
+    currentStock: "" as number | "",
     unit: "ea",
   });
 
@@ -63,6 +63,7 @@ export const NewInventoryForm = () => {
     const newItem: InventoryItem = {
       ...formData, // 기존 입력값들을 그대로 복사
       id: finalId, // 결정된 ID를 할당
+      currentStock: Number(formData.currentStock) || 0,
       category: "부품", // 기본 카테고리 할당
     };
 
@@ -75,7 +76,7 @@ export const NewInventoryForm = () => {
       id: "",
       spec: "",
       location: "",
-      currentStock: 0,
+      currentStock: "",
       unit: "ea",
     });
 
@@ -84,7 +85,7 @@ export const NewInventoryForm = () => {
 
   return (
     <section className="mb-8 p-5 bg-slate-100 rounded-lg">
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex justify-between items-center">
         <h2 className="mt-0 mb-4 text-xl font-bold text-slate-900">
           ➕ 신규 자재 등록
         </h2>
@@ -123,7 +124,7 @@ export const NewInventoryForm = () => {
         />
         <input
           type="number"
-          placeholder="초기재고"
+          placeholder="수량"
           value={formData.currentStock}
           // 숫자로 입력받기 위해 Number() 변환 처리
           onChange={(e) =>

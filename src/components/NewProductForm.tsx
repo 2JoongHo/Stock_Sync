@@ -12,12 +12,16 @@ export const NewProductForm = () => {
   const [productName, setProductName] = useState(""); // 완제품 이름
   const [productId, setProductId] = useState(""); // 완제품 제품코드
   const [selectedMaterialId, setSelectedMaterialId] = useState(""); // 선택된 자재 ID
-  const [materialQuantity, setMaterialQuantity] = useState<number>(0); // 선택된 자재의 소모량
+  const [materialQuantity, setMaterialQuantity] = useState<number | "">(""); // 선택된 자재의 소모량
   const [bomList, setBomList] = useState<BOMItem[]>([]); // 현재 조립 중인 BOM 리스트
 
   // BOM 리스트에 자재 추가
   const handleAddBOM = () => {
-    if (!selectedMaterialId || materialQuantity <= 0) {
+    if (
+      !selectedMaterialId ||
+      !materialQuantity ||
+      Number(materialQuantity) <= 0
+    ) {
       return alert("자재를 선택하고 수량을 입력해주세요.");
     }
 
@@ -33,7 +37,7 @@ export const NewProductForm = () => {
 
     setBomList([...bomList, newItem]);
     setSelectedMaterialId(""); // 선택 초기화
-    setMaterialQuantity(0); // 수량 초기화
+    setMaterialQuantity(""); // 수량 초기화
   };
 
   // 최종 완제품 등록
@@ -93,7 +97,7 @@ export const NewProductForm = () => {
           <label className="block font-bold mb-1.5 text-slate-700">
             자재 구성
           </label>
-          <div className="flex gap-2.5">
+          <div className="flex flex-col md:flex-row gap-2.5">
             {/* 자재 선택 */}
             <select
               value={selectedMaterialId}
