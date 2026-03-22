@@ -57,7 +57,7 @@ export const Header = () => {
       </div>
 
       <div className="mb-10 flex flex-col lg:flex-row lg:items-end justify-between gap-6">
-        <div text-center lg:text-left>
+        <div className="text-center lg:text-left">
           <h1 className="text-slate-900 text-3xl md:text-4xl font-black tracking-tight">
             StockSync
           </h1>

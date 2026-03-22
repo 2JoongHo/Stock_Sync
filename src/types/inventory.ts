@@ -19,6 +19,7 @@ export interface StockLog {
   timestamp: string; // 발생 시간
   productName?: string;
   handler: string; // 담당자
+  lotNo?: string; // lot 번호
 }
 
 // BOM 단위 Item

@@ -24,6 +24,13 @@ export const ProductDispatch = () => {
     {},
   );
 
+  // Lot No 관련
+  const [lotNumbers, setLotNumbers] = useState<{ [key: string]: string }>({});
+
+  const handleLotChange = (productId: string, value: string) => {
+    setLotNumbers((prev) => ({ ...prev, [productId]: value }));
+  };
+
   // 개별 제품의 수량을 변경하는 함수
   const handleAmountChange = (productId: string, value: string) => {
     const numValue = value === "" ? undefined : Number(value);
@@ -33,6 +40,7 @@ export const ProductDispatch = () => {
   // 생산 실행 핸들러
   const handleDispatch = (product: Product) => {
     const dispatchAmount = amounts[product.id] || 0;
+    const lotNo = lotNumbers[product.id] || ""; // Lot No 가져오기 없을경우 빈값
 
     // 유효성 검사: 생산 수량이 0이면 중단
     if (dispatchAmount <= 0) {
@@ -41,10 +49,14 @@ export const ProductDispatch = () => {
 
     // dispatchProduct 함수 호출
     // 선택된 제품과 입력된 수량을 전달하면 모든 자재를 한꺼번에 차감
-    dispatchProduct(product, dispatchAmount);
+    // 제품, 제품수량, lotNo
+    dispatchProduct(product, dispatchAmount, lotNo);
 
     // 입력창을 다시 placeholder로 초기화
     setAmounts((prev) => ({ ...prev, [product.id]: undefined }));
+
+    // lotNo 다시 placeholder로 초기화
+    setLotNumbers((prev) => ({ ...prev, [product.id]: "" }));
   };
 
   // 검색 로직: 상황실에 있는 모든 완제품 중 검색어에 맞는 것만 필터링
@@ -88,6 +100,7 @@ export const ProductDispatch = () => {
         <div className="max-h-[45vh] overflow-y-auto pr-2 custom-scrollbar">
           {filteredProducts.map((product) => {
             const currentAmount = amounts[product.id] || "";
+            const currentLot = lotNumbers[product.id] || "";
 
             return (
               <div
@@ -138,6 +151,15 @@ export const ProductDispatch = () => {
                     // 일반 모드일 때: 기존 '수량 입력 + 생산' 버튼 노출
                     <div className="flex items-center gap-2">
                       <input
+                        type="text"
+                        placeholder="Lot No."
+                        value={currentLot}
+                        onChange={(e) =>
+                          handleLotChange(product.id, e.target.value)
+                        }
+                        className="w-20 h-9 p-1.5 border border-slate-300 rounded text-center text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                      <input
                         id={`qty-${product.id}`}
                         type="number"
                         placeholder="수량"
@@ -146,7 +168,7 @@ export const ProductDispatch = () => {
                         onChange={(e) =>
                           handleAmountChange(product.id, e.target.value)
                         }
-                        className="w-20 h-9 p-1.5 border border-slate-300 rounded text-right text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-20 h-9 p-1.5 border border-slate-300 rounded text-center text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
                       <button
                         onClick={() => handleDispatch(product)}

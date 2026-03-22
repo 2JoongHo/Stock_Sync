@@ -20,7 +20,11 @@ interface InventoryState {
   // 완제품 관련
   addProduct: (newProduct: Product) => Promise<void>;
   removeProduct: (productId: string) => Promise<void>;
-  dispatchProduct: (product: Product, productAmount: number) => Promise<void>;
+  dispatchProduct: (
+    product: Product,
+    productAmount: number,
+    lotNo: string,
+  ) => Promise<void>;
 
   // 로그 관련
   cancelLog: (logId: string) => Promise<void>;
@@ -70,6 +74,7 @@ export const useInventoryStore = create<InventoryState>((set, get) => ({
           ...l,
           itemId: l.item_id,
           productName: l.product_name,
+          lotNo: l.lot_no,
         })) || [],
     });
   },
@@ -105,7 +110,7 @@ export const useInventoryStore = create<InventoryState>((set, get) => ({
   },
 
   // 완제품 출고 (BOM 자동 차감)
-  dispatchProduct: async (product, productAmount) => {
+  dispatchProduct: async (product, productAmount, lotNo) => {
     const { items, userName } = get();
 
     // 재고 검증
@@ -139,6 +144,7 @@ export const useInventoryStore = create<InventoryState>((set, get) => ({
           quantity: deduction,
           timestamp: new Date().toLocaleString(),
           handler: userName || "미지정",
+          lot_no: lotNo || null,
         },
       ]);
     }
