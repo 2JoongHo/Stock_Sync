@@ -21,7 +21,7 @@ export const ProductDispatch = () => {
 
   // 각 제품별 생산 수량을 관리하기 위한 바구니 (ID별로 수량 저장)
   const [amounts, setAmounts] = useState<{ [key: string]: number | undefined }>(
-    {}
+    {},
   );
 
   // 개별 제품의 수량을 변경하는 함수
@@ -48,8 +48,10 @@ export const ProductDispatch = () => {
   };
 
   // 검색 로직: 상황실에 있는 모든 완제품 중 검색어에 맞는 것만 필터링
-  const filteredProducts = products.filter((p) =>
-    p.name.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredProducts = products.filter(
+    (p) =>
+      p.name.toLowerCase().includes(searchTerm.toLowerCase()) || // 제품명
+      p.id.toLowerCase().includes(searchTerm.toLowerCase()), // 제품코드
   );
 
   return (
@@ -106,7 +108,7 @@ export const ProductDispatch = () => {
                       <button
                         onClick={() =>
                           setExpandedId(
-                            expandedId === product.id ? null : product.id
+                            expandedId === product.id ? null : product.id,
                           )
                         }
                         className="text-xs font-bold text-blue-500 hover:text-blue-700 cursor-pointer bg-blue-50 px-2 py-1 rounded"
@@ -144,7 +146,7 @@ export const ProductDispatch = () => {
                         onChange={(e) =>
                           handleAmountChange(product.id, e.target.value)
                         }
-                        className="w-20 h-9 p-1.5 border border-slate-300 rounded text-right focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                        className="w-20 h-9 p-1.5 border border-slate-300 rounded text-right text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
                       <button
                         onClick={() => handleDispatch(product)}
@@ -162,7 +164,7 @@ export const ProductDispatch = () => {
                     <div className="grid grid-cols-1 gap-x-6 gap-y-2">
                       {product.bom.map((b) => {
                         const material = items.find(
-                          (i) => i.id === b.materialId
+                          (i) => i.id === b.materialId,
                         );
                         return (
                           <div
