@@ -118,7 +118,7 @@ export const NewProductForm = () => {
               placeholder="수량"
               value={materialQuantity}
               onChange={(e) => setMaterialQuantity(Number(e.target.value))}
-              className="flex-[1] p-2 border border-slate-300 rounded bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="flex-[1] p-2 border text-base border-slate-300 rounded bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
             />
 
             {/* 추가 버튼 */}

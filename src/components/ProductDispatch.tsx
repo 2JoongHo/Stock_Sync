@@ -21,7 +21,7 @@ export const ProductDispatch = () => {
 
   // 각 제품별 생산 수량을 관리하기 위한 바구니 (ID별로 수량 저장)
   const [amounts, setAmounts] = useState<{ [key: string]: number | undefined }>(
-    {},
+    {}
   );
 
   // 개별 제품의 수량을 변경하는 함수
@@ -49,7 +49,7 @@ export const ProductDispatch = () => {
 
   // 검색 로직: 상황실에 있는 모든 완제품 중 검색어에 맞는 것만 필터링
   const filteredProducts = products.filter((p) =>
-    p.name.toLowerCase().includes(searchTerm.toLowerCase()),
+    p.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -82,104 +82,109 @@ export const ProductDispatch = () => {
             : "등록된 완제품이 없습니다. 제품을 먼저 등록해주세요."}
         </p>
       ) : (
-        filteredProducts.map((product) => {
-          const currentAmount = amounts[product.id] || "";
+        // 스크롤 구현
+        <div className="max-h-[45vh] overflow-y-auto pr-2 custom-scrollbar">
+          {filteredProducts.map((product) => {
+            const currentAmount = amounts[product.id] || "";
 
-          return (
-            <div
-              key={product.id}
-              className="flex flex-col p-4 mb-4 bg-white rounded-lg border border-slate-200 shadow-sm hover:border-blue-300 transition-colors"
-            >
-              <div className="flex items-center justify-between w-full">
-                <div className="flex-1">
-                  <div className="flex items-center gap-3">
-                    <div className="flex flex-col">
-                      <span className="font-bold text-slate-800 text-lg">
-                        {product.name}
-                      </span>
-                      <div className="text-[0.7rem] text-slate-400 mt-0.5">
-                        {product.id}
+            return (
+              <div
+                key={product.id}
+                className="flex flex-col p-4 mb-4 bg-white rounded-lg border border-slate-200 shadow-sm hover:border-blue-300 transition-colors"
+              >
+                <div className="flex items-center justify-between w-full">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3">
+                      <div className="flex flex-col">
+                        <span className="font-bold text-slate-800 text-lg">
+                          {product.name}
+                        </span>
+                        <div className="text-[0.7rem] text-slate-400 mt-0.5">
+                          {product.id}
+                        </div>
                       </div>
+                      <button
+                        onClick={() =>
+                          setExpandedId(
+                            expandedId === product.id ? null : product.id
+                          )
+                        }
+                        className="text-xs font-bold text-blue-500 hover:text-blue-700 cursor-pointer bg-blue-50 px-2 py-1 rounded"
+                      >
+                        {expandedId === product.id
+                          ? "▲ 제품 구성"
+                          : "▼ 제품 구성"}
+                      </button>
                     </div>
-                    <button
-                      onClick={() =>
-                        setExpandedId(
-                          expandedId === product.id ? null : product.id,
-                        )
-                      }
-                      className="text-xs font-bold text-blue-500 hover:text-blue-700 cursor-pointer bg-blue-50 px-2 py-1 rounded"
-                    >
-                      {expandedId === product.id
-                        ? "▲ 제품 구성"
-                        : "▼ 제품 구성"}
-                    </button>
                   </div>
+
+                  {/* 편집 시 삭제버튼 등장 */}
+                  {isEditMode ? (
+                    <button
+                      onClick={() => {
+                        if (
+                          window.confirm(`'${product.name}' 제품을 삭제할까요?`)
+                        ) {
+                          removeProduct(product.id);
+                        }
+                      }}
+                      className="h-9 px-3 bg-red-500 text-white rounded font-bold hover:bg-red-600 cursor-pointer text-sm whitespace-nowrap"
+                    >
+                      삭제
+                    </button>
+                  ) : (
+                    // 일반 모드일 때: 기존 '수량 입력 + 생산' 버튼 노출
+                    <div className="flex items-center gap-2">
+                      <input
+                        id={`qty-${product.id}`}
+                        type="number"
+                        placeholder="수량"
+                        min="1"
+                        value={currentAmount}
+                        onChange={(e) =>
+                          handleAmountChange(product.id, e.target.value)
+                        }
+                        className="w-20 h-9 p-1.5 border border-slate-300 rounded text-right focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                      />
+                      <button
+                        onClick={() => handleDispatch(product)}
+                        className="h-9 px-3 bg-emerald-600 text-white rounded font-bold hover:bg-emerald-900 shadow active:scale-[0.98] cursor-pointer text-sm whitespace-nowrap"
+                      >
+                        생산
+                      </button>
+                    </div>
+                  )}
                 </div>
 
-                {/* 편집 시 삭제버튼 등장 */}
-                {isEditMode ? (
-                  <button
-                    onClick={() => {
-                      if (
-                        window.confirm(`'${product.name}' 제품을 삭제할까요?`)
-                      ) {
-                        removeProduct(product.id);
-                      }
-                    }}
-                    className="h-9 px-3 bg-red-500 text-white rounded font-bold hover:bg-red-600 cursor-pointer text-sm whitespace-nowrap"
-                  >
-                    삭제
-                  </button>
-                ) : (
-                  // 일반 모드일 때: 기존 '수량 입력 + 생산' 버튼 노출
-                  <div className="flex items-center gap-2">
-                    <input
-                      id={`qty-${product.id}`}
-                      type="number"
-                      placeholder="수량"
-                      min="1"
-                      value={currentAmount}
-                      onChange={(e) =>
-                        handleAmountChange(product.id, e.target.value)
-                      }
-                      className="w-20 h-9 p-1.5 border border-slate-300 rounded text-right focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-                    />
-                    <button
-                      onClick={() => handleDispatch(product)}
-                      className="h-9 px-3 bg-emerald-600 text-white rounded font-bold hover:bg-emerald-900 shadow active:scale-[0.98] cursor-pointer text-sm whitespace-nowrap"
-                    >
-                      생산
-                    </button>
+                {/* 제품 구성 상세 리스트 (클릭 시에만 보임) */}
+                {expandedId === product.id && (
+                  <div className="mt-4 p-4 bg-slate-50 rounded-md border border-slate-200 animate-in fade-in slide-in-from-top-2">
+                    <div className="grid grid-cols-1 gap-x-6 gap-y-2">
+                      {product.bom.map((b) => {
+                        const material = items.find(
+                          (i) => i.id === b.materialId
+                        );
+                        return (
+                          <div
+                            key={b.materialId}
+                            className="flex justify-between text-sm py-1 border-b border-slate-200 border-dashed"
+                          >
+                            <span className="text-slate-600">
+                              • {material?.name || "알 수 없는 자재"}
+                            </span>
+                            <span className="font-medium text-slate-900">
+                              {b.quantity} ea
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
                 )}
               </div>
-
-              {/* 제품 구성 상세 리스트 (클릭 시에만 보임) */}
-              {expandedId === product.id && (
-                <div className="mt-4 p-4 bg-slate-50 rounded-md border border-slate-200 animate-in fade-in slide-in-from-top-2">
-                  <div className="grid grid-cols-1 gap-x-6 gap-y-2">
-                    {product.bom.map((b) => {
-                      const material = items.find((i) => i.id === b.materialId);
-                      return (
-                        <div
-                          key={b.materialId}
-                          className="flex justify-between text-sm py-1 border-b border-slate-200 border-dashed"
-                        >
-                          <span className="text-slate-600">
-                            • {material?.name || "알 수 없는 자재"}
-                          </span>
-                          <span className="font-medium text-slate-900">
-                            {b.quantity} ea
-                          </span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-            </div>
-          );
-        })
+            );
+          })}
+        </div>
       )}
     </section>
   );

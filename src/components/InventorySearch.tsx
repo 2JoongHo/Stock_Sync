@@ -12,7 +12,7 @@ export const InventorySearch = ({ value, onChange }: SearchProps) => {
       placeholder="제품명 또는 규격 검색..."
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className="h-10 px-3 rounded border border-slate-300 bg-white w-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+      className="h-10 px-3 rounded border border-slate-300 bg-white w-full text-base focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
     />
   );
 };

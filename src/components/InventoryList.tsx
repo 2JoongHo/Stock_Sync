@@ -23,14 +23,14 @@ export const InventoryList = () => {
   const filteredItems = items.filter(
     (item) =>
       item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.spec.toLowerCase().includes(searchTerm.toLowerCase()),
+      item.spec.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   // 입출고 실행 함수
   const handleManualUpdate = (itemId: string, type: "IN" | "OUT") => {
     // 특정 자재의 입력창을 ID로 직접 찾아옴 (DOM 접근)
     const inputElement = document.getElementById(
-      `input-${itemId}`,
+      `input-${itemId}`
     ) as HTMLInputElement;
     const value = Number(inputElement.value);
 
@@ -85,85 +85,92 @@ export const InventoryList = () => {
           {searchTerm ? "검색 결과가 없습니다." : "등록된 자재가 없습니다."}
         </p>
       ) : (
-        filteredItems.map((item) => {
-          // 개별 안전재고 설정이 있으면 사용, 없으면(??) 공장 기준(100)을 사용
-          const safetyLimit = item.safetyStock ?? GLOBAL_SAFETY_STOCK;
-          const isLowStock = item.currentStock <= safetyLimit;
+        // 스크롤 구현
+        <div className="max-h-[45vh] overflow-y-auto pr-2 custom-scrollbar">
+          {filteredItems.map((item) => {
+            // 개별 안전재고 설정이 있으면 사용, 없으면(??) 공장 기준(100)을 사용
+            const safetyLimit = item.safetyStock ?? GLOBAL_SAFETY_STOCK;
+            const isLowStock = item.currentStock <= safetyLimit;
 
-          return (
-            <div
-              key={item.id}
-              className={`mb-4 p-4 flex items-center justify-between rounded-lg border transition-all ${isLowStock ? "bg-rose-50 border-rose-300 border-2" : "bg-white border-slate-200"}`}
-            >
-              <div className="flex-1">
-                <div className="flex items-center gap-2">
-                  <strong className="text-slate-900">{item.name}</strong>
-                  {/* 재고가 위험 기준치 이하면 경고 배지를 보여줌 */}
-                  {isLowStock && (
-                    <span className="bg-rose-600 text-white text-[0.7rem] px-1.5 py-0.5 rounded font-bold">
-                      재고부족
+            return (
+              <div
+                key={item.id}
+                className={`mb-4 p-4 flex items-center justify-between rounded-lg border transition-all ${isLowStock ? "bg-rose-50 border-rose-300 border-2" : "bg-white border-slate-200"}`}
+              >
+                <div className="flex-1">
+                  <div className="flex items-center gap-2">
+                    <strong className="text-slate-900">{item.name}</strong>
+                    {/* 재고가 위험 기준치 이하면 경고 배지를 보여줌 */}
+                    {isLowStock && (
+                      <span className="bg-rose-600 text-white text-[0.7rem] px-1.5 py-0.5 rounded font-bold">
+                        재고부족
+                      </span>
+                    )}
+                  </div>
+                  <small className="text-slate-500 text-xs">
+                    {/* 규격 | 제품코드 */}
+                    {item.spec} | {item.id}
+                  </small>{" "}
+                  <div className="mt-1">
+                    <span className="text-medium text-slate-600">
+                      현 재고:{" "}
                     </span>
-                  )}
+                    <strong
+                      className={`text-xl ${isLowStock ? "text-rose-600" : "text-slate-900"}`}
+                    >
+                      {item.currentStock}
+                    </strong>
+                    <span className="text-sm text-slate-600 ml-1">
+                      {item.unit}
+                    </span>
+                  </div>
                 </div>
-                <small className="text-slate-500 text-xs">
-                  {/* 규격 | 제품코드 */}
-                  {item.spec} | {item.id}
-                </small>{" "}
-                <div className="mt-1">
-                  <span className="text-medium text-slate-600">현 재고: </span>
-                  <strong
-                    className={`text-xl ${isLowStock ? "text-rose-600" : "text-slate-900"}`}
-                  >
-                    {item.currentStock}
-                  </strong>
-                  <span className="text-sm text-slate-600 ml-1">
-                    {item.unit}
-                  </span>
-                </div>
-              </div>
 
-              {/* 모드에 따라 버튼 그룹을 다르게 */}
-              {isEditMode ? (
-                // 관리 모드일 때는 삭제 버튼 노출
-                <button
-                  onClick={() => {
-                    if (
-                      window.confirm(`'${item.name}' 자재를 삭제하시겠습니까?`)
-                    ) {
-                      removeItem(item.id);
-                    }
-                  }}
-                  className="bg-red-500 text-white px-3 py-2 rounded font-bold hover:bg-red-600 cursor-pointer text-sm"
-                >
-                  삭제
-                </button>
-              ) : (
-                // 일반 모드일 때는 입출고 입력창 노출
-                <div className="flex gap-2">
-                  <input
-                    id={`input-${item.id}`}
-                    type="number"
-                    placeholder="수량"
-                    min="1"
-                    className="w-20 p-1.5 border border-slate-300 rounded text-right focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
+                {/* 모드에 따라 버튼 그룹을 다르게 */}
+                {isEditMode ? (
+                  // 관리 모드일 때는 삭제 버튼 노출
                   <button
-                    onClick={() => handleManualUpdate(item.id, "IN")}
-                    className="bg-blue-600 text-white px-3 py-2 rounded font-bold hover:bg-blue-900 cursor-pointer text-sm"
+                    onClick={() => {
+                      if (
+                        window.confirm(
+                          `'${item.name}' 자재를 삭제하시겠습니까?`
+                        )
+                      ) {
+                        removeItem(item.id);
+                      }
+                    }}
+                    className="bg-red-500 text-white px-3 py-2 rounded font-bold hover:bg-red-600 cursor-pointer text-sm"
                   >
-                    입고
+                    삭제
                   </button>
-                  <button
-                    onClick={() => handleManualUpdate(item.id, "OUT")}
-                    className="bg-orange-600 text-white px-3 py-2 rounded font-bold hover:bg-orange-900 cursor-pointer text-sm"
-                  >
-                    출고
-                  </button>
-                </div>
-              )}
-            </div>
-          );
-        })
+                ) : (
+                  // 일반 모드일 때는 입출고 입력창 노출
+                  <div className="flex gap-2">
+                    <input
+                      id={`input-${item.id}`}
+                      type="number"
+                      placeholder="수량"
+                      min="1"
+                      className="w-20 p-1.5 border border-slate-300 rounded text-right text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                    <button
+                      onClick={() => handleManualUpdate(item.id, "IN")}
+                      className="bg-blue-600 text-white px-3 py-2 rounded font-bold hover:bg-blue-900 cursor-pointer text-sm"
+                    >
+                      입고
+                    </button>
+                    <button
+                      onClick={() => handleManualUpdate(item.id, "OUT")}
+                      className="bg-orange-600 text-white px-3 py-2 rounded font-bold hover:bg-orange-900 cursor-pointer text-sm"
+                    >
+                      출고
+                    </button>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
       )}
     </section>
   );
