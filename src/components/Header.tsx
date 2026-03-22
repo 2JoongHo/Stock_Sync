@@ -74,7 +74,7 @@ export const Header = () => {
             }
             className={`flex-1 lg:flex-none px-4 py-3 lg:py-2 rounded-xl font-bold text-xs md:text-sm transition-all border-2 cursor-pointer ${
               activeForm === "material"
-                ? "bg-red-500 text-white border-red-500"
+                ? "bg-blue-500 text-white border-blue-500"
                 : "bg-white text-slate-700 border-slate-200"
             }`}
           >
@@ -86,7 +86,7 @@ export const Header = () => {
             }
             className={`flex-1 lg:flex-none px-4 py-3 lg:py-2 rounded-xl font-bold text-xs md:text-sm transition-all border-2 cursor-pointer ${
               activeForm === "product"
-                ? "bg-red-500 text-white border-red-500"
+                ? "bg-blue-500 text-white border-blue-500"
                 : "bg-white text-slate-700 border-slate-200"
             }`}
           >
