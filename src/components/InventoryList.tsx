@@ -22,15 +22,16 @@ export const InventoryList = () => {
   // .toLowerCase(): 대소문자 구분 없이 검색되도록 모두 소문자로 변환하여 비교
   const filteredItems = items.filter(
     (item) =>
-      item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.spec.toLowerCase().includes(searchTerm.toLowerCase())
+      item.name.toLowerCase().includes(searchTerm.toLowerCase()) || // 제품명
+      item.spec.toLowerCase().includes(searchTerm.toLowerCase()) || // 규격
+      item.id.toLowerCase().includes(searchTerm.toLowerCase()), // 제품코드
   );
 
   // 입출고 실행 함수
   const handleManualUpdate = (itemId: string, type: "IN" | "OUT") => {
     // 특정 자재의 입력창을 ID로 직접 찾아옴 (DOM 접근)
     const inputElement = document.getElementById(
-      `input-${itemId}`
+      `input-${itemId}`,
     ) as HTMLInputElement;
     const value = Number(inputElement.value);
 
@@ -133,7 +134,7 @@ export const InventoryList = () => {
                     onClick={() => {
                       if (
                         window.confirm(
-                          `'${item.name}' 자재를 삭제하시겠습니까?`
+                          `'${item.name}' 자재를 삭제하시겠습니까?`,
                         )
                       ) {
                         removeItem(item.id);
