@@ -143,7 +143,7 @@ export const ProductDispatch = () => {
                           removeProduct(product.id);
                         }
                       }}
-                      className="h-9 px-3 bg-red-500 text-white rounded font-bold hover:bg-red-600 cursor-pointer text-sm whitespace-nowrap"
+                      className="h-9 px-3 bg-red-600 text-white rounded font-bold hover:bg-red-600 cursor-pointer text-sm whitespace-nowrap animate-pulse"
                     >
                       삭제
                     </button>
