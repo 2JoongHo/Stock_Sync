@@ -54,6 +54,7 @@ export const exportFullInventoryReport = (
         구분: log.type === "IN" ? "입고" : "출고",
         수량: log.quantity,
         완제품명: log.productName || "",
+        생산번호: log.lotNo || "",
         담당자: log.handler || "미지정",
       };
     })

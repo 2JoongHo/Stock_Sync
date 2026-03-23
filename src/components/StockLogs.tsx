@@ -11,6 +11,36 @@ export const StockLogs = () => {
     .sort((a, b) => b.id.localeCompare(a.id))
     .slice(0, 10);
 
+  // 날짜 형식을 [2026/03/23 13:03:22] 형태로 변환하는 함수
+  const formatStockDate = (dateStr: string) => {
+    try {
+      const parts = dateStr.split(" ");
+      if (parts.length < 5) return dateStr;
+
+      const year = parts[0].replace(".", "");
+      const month = parts[1].replace(".", "").padStart(2, "0");
+      const day = parts[2].replace(".", "").padStart(2, "0");
+
+      const ampm = parts[3]; // "오전" 또는 "오후"
+      const timeParts = parts[4].split(":"); // [1, 03, 22]
+
+      let hours = parseInt(timeParts[0]);
+      const minutes = timeParts[1];
+      const seconds = timeParts[2];
+
+      // 오전/오후를 24시간제로 변환
+      if (ampm === "오후" && hours < 12) hours += 12;
+      if (ampm === "오전" && hours === 12) hours = 0;
+
+      const formattedHours = String(hours).padStart(2, "0");
+
+      return `${year}/${month}/${day} ${formattedHours}:${minutes}:${seconds}`;
+    } catch (e) {
+      console.log("날짜 변환 중 에러 발생 : ", e);
+      return dateStr; // 에러 시 원본 출력
+    }
+  };
+
   return (
     <section className="mt-10">
       <h2 className="m-0 text-xl font-bold">📜 최근 입출고 기록</h2>
@@ -41,8 +71,8 @@ export const StockLogs = () => {
                 <div className="flex-1">
                   {/* 발생 시간 / 담당자 정보 */}
                   <div className="mb-0.5">
-                    <strong>
-                      [{log.timestamp}] [{log.handler}]{" "}
+                    <strong className="text-slate-700">
+                      [{formatStockDate(log.timestamp)}] [{log.handler}]
                     </strong>
                     {/* 완제품 출고 시 어떤 제품 때문인지 표시 */}
                     {log.productName && (
