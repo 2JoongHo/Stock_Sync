@@ -1,7 +1,7 @@
 // 엑셀로 내보내는 유틸
 
 import * as XLSX from "xlsx";
-import type { InventoryItem, StockLog } from "../types/inventory";
+import type { InventoryItem, Product, StockLog } from "../types/inventory";
 
 interface ExcelRow {
   제품명?: string;
@@ -14,10 +14,41 @@ interface ExcelRow {
   "안전 재고"?: number;
 }
 
+// 날짜 형식을 [2026/03/23 13:03:22] 형태로 변환하는 함수
+const formatExcelDate = (dateStr: string) => {
+  try {
+    const parts = dateStr.split(" ");
+    if (parts.length < 5) return dateStr;
+
+    const year = parts[0].replace(".", "");
+    const month = parts[1].replace(".", "").padStart(2, "0");
+    const day = parts[2].replace(".", "").padStart(2, "0");
+
+    const ampm = parts[3]; // "오전" 또는 "오후"
+    const timeParts = parts[4].split(":"); // [1, 03, 22]
+
+    let hours = parseInt(timeParts[0]);
+    const minutes = timeParts[1];
+    const seconds = timeParts[2];
+
+    // 오전/오후를 24시간제로 변환
+    if (ampm === "오후" && hours < 12) hours += 12;
+    if (ampm === "오전" && hours === 12) hours = 0;
+
+    const formattedHours = String(hours).padStart(2, "0");
+
+    return `${year}/${month}/${day} ${formattedHours}:${minutes}:${seconds}`;
+  } catch (e) {
+    console.log("날짜 변환 중 에러 발생 : ", e);
+    return dateStr; // 에러 시 원본 출력
+  }
+};
+
 // 자재 현황과 입출고 기록을 한번에 엑셀로 내보내기
 export const exportFullInventoryReport = (
   items: InventoryItem[],
   logs: StockLog[],
+  products: Product[],
 ) => {
   // 오늘 날짜
   const now = new Date();
@@ -44,16 +75,20 @@ export const exportFullInventoryReport = (
   // 입출고 기록
   const historyData = todayLogs
     .map((log) => {
-      // 로그의 itemId로 자재 리스트에서 이름을 찾아옵니다.
+      // 로그의 itemId로 자재 리스트에서 이름을 찾아오기
       const targetItem = items.find((i) => i.id === log.itemId);
 
+      // 완제품 이름으로 완제품 코드를 찾아오기
+      const targetProduct = products.find((p) => p.name === log.productName);
+
       return {
-        날짜: log.timestamp,
+        날짜: formatExcelDate(log.timestamp),
         자재명: targetItem ? targetItem.name : "삭제된 자재",
         제품코드: targetItem ? targetItem.id : log.itemId,
         구분: log.type === "IN" ? "입고" : "출고",
         수량: log.quantity,
         완제품명: log.productName || "",
+        완제품코드: targetProduct ? targetProduct.id : "",
         생산번호: log.lotNo || "",
         담당자: log.handler || "미지정",
       };
