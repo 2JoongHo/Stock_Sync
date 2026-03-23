@@ -59,11 +59,11 @@ export const Header = () => {
       <div className="mb-10 flex flex-col lg:flex-row lg:items-end justify-between gap-6">
         <div className="text-center lg:text-left">
           <h1 className="text-slate-900 text-3xl md:text-4xl font-black tracking-tight">
-            StockSync
+            재고관리
           </h1>
-          <p className="text-slate-500 font-medium text-sm md:text-base">
+          {/* <p className="text-slate-500 font-medium text-sm md:text-base">
             실시간 재고 관리 및 BOM 자동 동기화 시스템
-          </p>
+          </p> */}
         </div>
 
         {/* 폼 열기/닫기 제어 버튼 그룹 */}
