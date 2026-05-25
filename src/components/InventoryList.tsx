@@ -49,7 +49,7 @@ export const InventoryList = () => {
 
   // OCR 공정용 임시 상태
   const [isCameraOpen, setIsCameraOpen] = useState(false); // 카메라 열기 / 닫기
-  const [ocrLoading, setOcrLoading] = useState(false); // AI가 글자 읽는 중인지 표시
+  // const [ocrLoading, setOcrLoading] = useState(false); // AI가 글자 읽는 중인지 표시
   const videoRef = useRef<HTMLVideoElement>(null); // 실시간 카메라 화면을 보여줄 렌즈
   const canvasRef = useRef<HTMLCanvasElement>(null); // 사진을 찍어둘 임시 캔버스
   const streamRef = useRef<MediaStream | null>(null); // 카메라 전원 홀더
