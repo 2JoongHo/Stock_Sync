@@ -63,12 +63,7 @@ export const Header = () => {
           <h1 className="text-slate-900 text-3xl md:text-4xl font-black tracking-tight">
             재고관리
           </h1>
-<<<<<<< Updated upstream
           {/* <p className="text-slate-500 font-medium text-sm md:text-base">
-=======
-          {/* 설명 */}
-          <p className="text-slate-500 font-medium text-sm md:text-base">
->>>>>>> Stashed changes
             실시간 재고 관리 및 BOM 자동 동기화 시스템
           </p> */}
         </div>

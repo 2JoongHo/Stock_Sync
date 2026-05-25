@@ -1,10 +1,12 @@
 // 자재 현황 리스트 컴포넌트
 
 import { useRef, useState } from "react";
+import Tesseract from "tesseract.js"; // OCR 라이브러리
 import downloadIcon from "../assets/downloadIcon.svg";
 import { InventorySearch } from "../components/InventorySearch";
 import { useInventoryStore } from "../stores/useInventoryStore";
 import { exportFullInventoryReport } from "../utils/excelUtils"; // 엑셀로 내보내기
+console.log(Tesseract); // 임시
 
 export const InventoryList = () => {
   // Zustand에서 자재 데이터와 수량 업데이트 함수를 가져옴
