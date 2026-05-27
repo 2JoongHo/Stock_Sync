@@ -1,10 +1,12 @@
 // 신규 자재 등록 컴포넌트
 
 import { useState } from "react";
+import cameraIcon from "../assets/cameraIcon.svg";
 import uploadIcon from "../assets/uploadIcon.svg";
 import { useInventoryStore } from "../stores/useInventoryStore";
 import type { InventoryItem } from "../types/inventory";
 import { importInventoryFromExcel } from "../utils/excelUtils"; // 엑셀로 불러오기
+import { CameraScannerModal } from "./CameraScannerModal"; // 카메라 스캔 모달 컴포넌트 불러오기
 
 export const NewInventoryForm = () => {
   // Zustand에서 현재 자재 리스트와 리스트 업데이트 함수를 가져옴
@@ -20,6 +22,57 @@ export const NewInventoryForm = () => {
     currentStock: "" as number | "",
     unit: "ea",
   });
+
+  // 카메라 스캔 모달 열림 상태
+  const [isCameraOpen, setIsCameraOpen] = useState(false);
+
+  // 스캐너가 데이터를 물어오면 실행되는 함수 (데이터 자동 입력)
+  const handleScanData = (data: string) => {
+    try {
+      // 1. QR 데이터가 JSON 규칙(예: {"id": "A-1", "name": "볼트", "qty": 50})이라고 가정하고 쪼갭니다.
+      const parsedData = JSON.parse(data);
+
+      // 2. 쪼갠 데이터를 현재 폼 바구니(formData)에 스르륵 덮어씌웁니다.
+      setFormData((prev) => ({
+        ...prev,
+        id: parsedData.id || prev.id, // QR에 ID가 있으면 넣고, 없으면 원래 있던 값 유지
+        name: parsedData.name || prev.name,
+        currentStock: parsedData.qty || prev.currentStock,
+      }));
+
+      // 완료 팝업창
+      alert(
+        `스캔 완료! 폼에 데이터가 자동으로 입력되었습니다.\n내용을 확인하고 [등록]을 눌러주세요.`,
+      );
+    } catch {
+      // =====================================
+      // 🤖 2. AI 텍스트 스캔 (거름망 필터 적용)
+      // =====================================
+      console.log("🤖 원본 텍스트:\n", data);
+
+      // 🔪 거름망: '품명:', '코드:', '수량:' 뒤에 오는 글자나 숫자만 예리하게 잘라냅니다.
+      const nameMatch = data.match(/품명[:\s]*([^\n]+)/); // '품명:' 뒤부터 줄바꿈 전까지
+      const idMatch = data.match(/코드[:\s]*([a-zA-Z0-9-]+)/); // '코드:' 뒤의 영문/숫자/- 기호
+      const qtyMatch = data.match(/수량[:\s]*(\d+)/); // '수량:' 뒤의 숫자만
+
+      // 세 개 중 하나라도 건진 게 있다면?
+      if (nameMatch || idMatch || qtyMatch) {
+        setFormData((prev) => ({
+          ...prev,
+          name: nameMatch ? nameMatch[1].trim() : prev.name, // 추출한 품명 넣기
+          id: idMatch ? idMatch[1].trim() : prev.id, // 추출한 코드 넣기
+          currentStock: qtyMatch ? Number(qtyMatch[1]) : prev.currentStock, // 추출한 수량 넣기
+        }));
+
+        alert(`[AI 글자 인식 완료]\n인식된 항목만 칸에 맞게 분류했습니다.`);
+      } else {
+        // 아무리 찾아도 우리가 정한 양식(품명, 코드, 수량)이 없을 때
+        alert(
+          `[인식 실패] 엉뚱한 글자가 읽혔습니다.\n\n카메라 초점을 맞추고 다시 시도해주세요.\n(원본: ${data.substring(0, 30)}...)`,
+        );
+      }
+    }
+  };
 
   // 엑셀 업로드 핸들러 구현
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -90,17 +143,35 @@ export const NewInventoryForm = () => {
           ➕ 신규 자재 등록
         </h2>
 
-        {/* 엑셀 가져오기 버튼 */}
-        <label className="flex items-center justify-center w-9 h-9 bg-emerald-500 text-white rounded font-bold cursor-pointer hover:bg-emerald-600 transition-all shadow-sm">
-          <img src={uploadIcon} alt="upload" className="w-5 h-5 invert" />
-          <input
-            type="file"
-            accept=".xlsx, .xls"
-            className="hidden"
-            onChange={handleFileUpload}
-          />
-        </label>
+        <div className="flex gap-2 mb-4">
+          {/* 엑셀 가져오기 버튼 */}
+          <label className="flex items-center justify-center w-9 h-9 bg-emerald-500 text-white rounded font-bold cursor-pointer hover:bg-emerald-600 transition-all shadow-sm">
+            <img src={uploadIcon} alt="upload" className="w-5 h-5 invert" />
+            <input
+              type="file"
+              accept=".xlsx, .xls"
+              className="hidden"
+              onChange={handleFileUpload}
+            />
+          </label>
+
+          <button
+            type="button" // form 제출을 막기 위해 type="button" 명시
+            onClick={() => setIsCameraOpen(true)}
+            className="flex items-center justify-center w-9 h-9 bg-purple-600 text-white rounded font-bold cursor-pointer hover:bg-purple-700 transition-all shadow-sm"
+          >
+            <img src={cameraIcon} alt="camera" className="w-5 h-5 invert" />
+          </button>
+        </div>
       </div>
+
+      {/* 카메라 스캔 모달 */}
+      {isCameraOpen && (
+        <CameraScannerModal
+          onClose={() => setIsCameraOpen(false)}
+          onScanSuccess={handleScanData}
+        />
+      )}
 
       <form onSubmit={handleAddItem} className="grid grid-cols-2 gap-2.5">
         {/* 입력창 */}
