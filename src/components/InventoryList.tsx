@@ -1,5 +1,6 @@
 // 자재 현황 리스트 컴포넌트
 
+import jsQR from "jsqr"; // QR코드 인식 라이브러리
 import { useRef, useState } from "react";
 import Tesseract from "tesseract.js"; // OCR 라이브러리
 import downloadIcon from "../assets/downloadIcon.svg";
@@ -49,7 +50,7 @@ export const InventoryList = () => {
 
   // OCR 공정용 임시 상태
   const [isCameraOpen, setIsCameraOpen] = useState(false); // 카메라 열기 / 닫기
-  // const [ocrLoading, setOcrLoading] = useState(false); // AI가 글자 읽는 중인지 표시
+  const [ocrLoading, setOcrLoading] = useState(false); // AI가 글자 읽는 중인지 표시
   const videoRef = useRef<HTMLVideoElement>(null); // 실시간 카메라 화면을 보여줄 렌즈
   const canvasRef = useRef<HTMLCanvasElement>(null); // 사진을 찍어둘 임시 캔버스
   const streamRef = useRef<MediaStream | null>(null); // 카메라 전원 홀더
@@ -59,10 +60,10 @@ export const InventoryList = () => {
     setIsCameraOpen(true);
 
     try {
-      // 1. 하드웨어 장치에 비디오 스트림 요청 (제약조건 최적화)
+      // 장치에 비디오 스트림 요청
       const stream = await navigator.mediaDevices.getUserMedia({
         video: {
-          // 스마트폰 후면을 우선하되, 없을 경우(PC) 아무 카메라나 가져오도록 설정
+          // 스마트폰 후면 우선, 없을 경우(PC) 아무 카메라나 가져오도록 설정
           facingMode: { ideal: "environment" },
           width: { ideal: 1280 },
           height: { ideal: 720 },
@@ -104,6 +105,56 @@ export const InventoryList = () => {
       streamRef.current.getTracks().forEach((track) => track.stop()); // 전원 OFF
     }
     setIsCameraOpen(false);
+  };
+
+  // 통합 스마트 판독 공정 (QR 우선 판독 -> 실패 시 AI를 통한 글자 인식)
+  const captureAndRecognize = async () => {
+    if (!videoRef.current || !canvasRef.current) return;
+
+    const video = videoRef.current;
+    const canvas = canvasRef.current;
+    const context = canvas.getContext("2d", { willReadFrequently: true });
+
+    if (!context) return;
+
+    // 카메라 화면 크기에 맞춰 캔버스 사이즈 조정
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    // 캔버스에 현재 카메라 화면을 그려서 스냅샷 찍기
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    // 캔버스에서 픽셀 데이터 가져오기 (QR 코드 인식용)
+    const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+
+    // 1 - QR 스캔
+    const code = jsQR(imageData.data, imageData.width, imageData.height, {
+      inversionAttempts: "dontInvert", // 속도 최적화 : 색상 반전 안함
+    });
+
+    if (code) {
+      console.log("QR 코드 인식 성공:", code.data);
+      alert(`[QR 스캔 성공!]\n\n데이터: ${code.data}`);
+      stopCamera();
+      return;
+    }
+
+    // 2 - AI 글자 인식(OCR) (QR 코드가 없을 때 대체 공정으로 실행)
+    console.log("QR 없음. AI 텍스트 인식을 시작합니다...");
+    setOcrLoading(true); // "분석 중..." 로딩 켜기
+
+    try {
+      const {
+        data: { text },
+      } = await Tesseract.recognize(canvas.toDataURL("image/png"), "kor+eng");
+
+      console.log("AI가 읽어낸 텍스트:", text);
+      alert(`[AI 글자 인식 성공!]\n\n내용:\n${text}`);
+      stopCamera();
+    } catch (error) {
+      console.error("AI 인식 실패:", error);
+      alert("데이터를 읽어내지 못했습니다. 다시 촬영해 주세요.");
+    } finally {
+      setOcrLoading(false); // 로딩 끄기
+    }
   };
 
   return (
@@ -184,10 +235,15 @@ export const InventoryList = () => {
                 닫기
               </button>
               <button
-                onClick={() => alert("다음 공정에서 진짜 글자를 읽어볼게요!")}
-                className="flex-1 py-2.5 bg-purple-600 text-white rounded-xl font-bold text-sm hover:bg-purple-700 transition-colors cursor-pointer"
+                onClick={captureAndRecognize}
+                disabled={ocrLoading}
+                className={`flex-1 py-2.5 text-white rounded-xl font-bold text-sm transition-colors cursor-pointer ${
+                  ocrLoading
+                    ? "bg-slate-400"
+                    : "bg-purple-600 hover:bg-purple-700"
+                }`}
               >
-                📸 사진 촬영
+                {ocrLoading ? "🤖 AI 분석 중..." : "📸 사진 촬영"}
               </button>
             </div>
           </div>

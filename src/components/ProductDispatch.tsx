@@ -126,9 +126,8 @@ export const ProductDispatch = () => {
                         }
                         className="text-xs font-bold text-blue-500 hover:text-blue-700 cursor-pointer bg-blue-50 px-2 py-1 rounded"
                       >
-                        {expandedId === product.id
-                          ? "▲ 제품 구성"
-                          : "▼ 제품 구성"}
+                        {/* 상세보기 */}
+                        {expandedId === product.id ? "▲" : "▼"}
                       </button>
                     </div>
                   </div>
