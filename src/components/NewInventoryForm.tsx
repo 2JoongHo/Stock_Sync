@@ -155,6 +155,7 @@ export const NewInventoryForm = () => {
             />
           </label>
 
+          {/* 카메라 버튼 */}
           <button
             type="button" // form 제출을 막기 위해 type="button" 명시
             onClick={() => setIsCameraOpen(true)}

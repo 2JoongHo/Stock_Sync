@@ -1,8 +1,10 @@
 // 완제품 및 BOM 등록 폼 컴포넌트
 
 import { useState } from "react";
+import cameraIcon from "../assets/cameraIcon.svg"; // 카메라 아이콘 이미지
 import { useInventoryStore } from "../stores/useInventoryStore";
 import type { BOMItem, Product } from "../types/inventory";
+import { CameraScannerModal } from "./CameraScannerModal"; // 카메라 스캐너 모달 컴포넌트
 
 export const NewProductForm = () => {
   // Zustand에서 자재 목록(items)과 완제품 등록 함수(addProduct)를 가져옴
@@ -15,6 +17,58 @@ export const NewProductForm = () => {
   const [materialQuantity, setMaterialQuantity] = useState<number | "">(""); // 선택된 자재의 소모량
   const [bomList, setBomList] = useState<BOMItem[]>([]); // 현재 조립 중인 BOM 리스트
 
+  // 스캐너 제어 및 파싱 세팅
+  const [isCameraOpen, setIsCameraOpen] = useState(false);
+
+  const handleScanData = (data: string) => {
+    console.log("🎯 스캔된 원본 데이터:\n", data);
+
+    let parsedProductCode = ""; // 제품 코드 => 전체 CTS-
+    let parsedProductName = ""; // 제품명 => HPIO, CIDR 등
+    // let parsedSerialNumber = ""; // S/N (일단 추출)
+
+    try {
+      // 1. QR이 JSON 형태일 때 (기본 규격 호환)
+      const jsonData = JSON.parse(data);
+      parsedProductCode = jsonData.id || "";
+      parsedProductName = jsonData.name || "";
+    } catch {
+      // 2. CanTops 라벨 전용 AI 텍스트 거름망
+      const modelMatch = data.match(
+        /(?:모델명\s*[:：]\s*)?(CTS-[A-Za-z0-9-]+(?:-[A-Za-z0-9-]+)*)/i,
+      );
+
+      if (modelMatch) {
+        parsedProductCode = modelMatch[1].trim(); // 예: CTS-HPIO-25-PIS...
+
+        // '-' 기호로 문자열을 쪼개서 배열에 담기
+        const parts = parsedProductCode.split("-");
+
+        // 두 번째 조각(인덱스 1)이 존재하면 그것을 '제품명'으로 사용
+        if (parts.length > 1) {
+          parsedProductName = parts[1]; // 예: HPIO, CIDR, CIDO
+        }
+      }
+
+      // 2. S/N (시리얼 넘버) 추출
+      // const snMatch = data.match(/(?:S\s*\/\s*N|序列[號号])\s*[:：]\s*([A-Za-z0-9-]+)/i);
+      // if (snMatch) parsedSerialNumber = snMatch[1].trim();
+    }
+
+    // 🎯 3. 걸러낸 데이터를 폼 바구니에 정확히 꽂아넣기
+    if (parsedProductCode) {
+      setProductId(parsedProductCode); // 전체 CTS-... 문자열을 '제품코드' 칸에!
+      setProductName(parsedProductName); // 잘라낸 HPIO를 '제품명' 칸에!
+
+      alert(
+        `[라벨 분석 완료!]\n제품코드: ${parsedProductCode}\n제품명: ${parsedProductName}\n자동 입력되었습니다.`,
+      );
+    } else {
+      alert(
+        `[인식 실패] CanTops 제품코드(CTS-)를 찾을 수 없습니다.\n(원본: ${data.substring(0, 30)}...)`,
+      );
+    }
+  };
   // BOM 리스트에 자재 추가
   const handleAddBOM = () => {
     if (
@@ -67,9 +121,28 @@ export const NewProductForm = () => {
 
   return (
     <section className="mb-8 p-5 bg-slate-100 rounded-lg">
-      <h2 className="mt-0 mb-4 text-xl font-bold text-slate-900">
-        ➕ 신규 제품 등록
-      </h2>
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="mt-0 mb-4 text-xl font-bold text-slate-900">
+          ➕ 신규 제품 등록
+        </h2>
+
+        {/* 카메라 버튼 */}
+        <button
+          type="button" // form 제출을 막기 위해 type="button" 명시
+          onClick={() => setIsCameraOpen(true)}
+          className="flex items-center justify-center w-9 h-9 bg-purple-600 text-white rounded font-bold cursor-pointer hover:bg-purple-700 transition-all shadow-sm"
+        >
+          <img src={cameraIcon} alt="camera" className="w-5 h-5 invert" />
+        </button>
+      </div>
+
+      {/* 카메라 스캔 모달 */}
+      {isCameraOpen && (
+        <CameraScannerModal
+          onClose={() => setIsCameraOpen(false)}
+          onScanSuccess={handleScanData}
+        />
+      )}
 
       {/* 전체를 form으로 감싸고 onSubmit을 연결하여 엔터키 지원 */}
       <form onSubmit={handleSaveProduct}>

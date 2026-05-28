@@ -86,11 +86,22 @@ export const CameraScannerModal = ({
 
     if (!context) return;
 
-    // 카메라 화면 크기에 맞춰 캔버스 사이즈 조정
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    // 캔버스에 현재 카메라 화면을 그려서 스냅샷 찍기
-    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    // 1. 카메라 화면 크기에 맞춰 캔버스 사이즈 조정
+    canvas.width = video.clientWidth;
+    canvas.height = video.clientHeight;
+    // 2. 캔버스에 현재 카메라 화면을 그려서 스냅샷 찍기
+    const scale = Math.max(
+      canvas.width / video.videoWidth,
+      canvas.height / video.videoHeight,
+    );
+    const scaledWidth = video.videoWidth * scale;
+    const scaledHeight = video.videoHeight * scale;
+    const dx = (canvas.width - scaledWidth) / 2;
+    const dy = (canvas.height - scaledHeight) / 2;
+
+    // 3. 내 눈에 보이는 부분만 정확히 잘라서 도화지에 그리기
+    context.drawImage(video, dx, dy, scaledWidth, scaledHeight);
+
     // 캔버스에서 픽셀 데이터 가져오기 (QR 코드 인식용)
     const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
 
@@ -114,7 +125,10 @@ export const CameraScannerModal = ({
     try {
       const {
         data: { text },
-      } = await Tesseract.recognize(canvas.toDataURL("image/png"), "kor+eng");
+      } = await Tesseract.recognize(
+        canvas.toDataURL("image/png"),
+        "kor+eng+chi_tra",
+      ); // 한국어, 영어, 중국어 번체 인식 설정
 
       console.log("AI가 읽어낸 텍스트:", text);
       alert(`[AI 글자 인식 성공!]\n\n내용:\n${text}`);
