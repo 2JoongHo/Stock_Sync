@@ -145,8 +145,9 @@ export const NewInventoryForm = () => {
 
         <div className="flex gap-2 mb-4">
           {/* 엑셀 가져오기 버튼 */}
-          <label className="flex items-center justify-center w-9 h-9 bg-emerald-500 text-white rounded font-bold cursor-pointer hover:bg-emerald-600 transition-all shadow-sm">
+          <label className="flex items-center justify-center gap-1 w-9 h-9 md:w-auto md:px-3 bg-emerald-500 text-white rounded font-bold cursor-pointer hover:bg-emerald-600 transition-all shadow-sm">
             <img src={uploadIcon} alt="upload" className="w-5 h-5 invert" />
+            <span className="hidden md:inline">엑셀 불러오기</span>
             <input
               type="file"
               accept=".xlsx, .xls"
@@ -159,9 +160,10 @@ export const NewInventoryForm = () => {
           <button
             type="button" // form 제출을 막기 위해 type="button" 명시
             onClick={() => setIsCameraOpen(true)}
-            className="flex items-center justify-center w-9 h-9 bg-purple-600 text-white rounded font-bold cursor-pointer hover:bg-purple-700 transition-all shadow-sm"
+            className="flex items-center justify-center gap-1 w-9 h-9 md:w-auto md:px-3 bg-purple-600 text-white rounded font-bold cursor-pointer hover:bg-purple-700 transition-all shadow-sm"
           >
             <img src={cameraIcon} alt="camera" className="w-5 h-5 invert" />
+            <span className="hidden md:inline">스캔</span>
           </button>
         </div>
       </div>

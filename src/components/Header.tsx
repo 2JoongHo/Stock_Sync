@@ -1,6 +1,8 @@
 // 헤더 컴포넌트
 
+import crossIcon from "../assets/crossIcon.svg"; // 닫기 아이콘 (x)
 import LockIcon from "../assets/lockIcon.svg";
+import plusIcon from "../assets/plusIcon.svg"; // 더하기 아이콘 (+)
 import UnlockIcon from "../assets/unlockIcon.svg";
 import { useInventoryStore } from "../stores/useInventoryStore";
 
@@ -42,16 +44,22 @@ export const Header = () => {
         {/* 전역 수정 모드 버튼 */}
         <button
           onClick={toggleEditMode}
-          className={`h-9 px-4 rounded-full font-bold text-xs transition-all shadow-md cursor-pointer ${
+          className={`flex items-center h-9 px-4 rounded-full font-bold text-xs transition-all shadow-md cursor-pointer ${
             isEditMode
               ? "bg-red-500 text-white animate-pulse"
               : "bg-slate-700 text-slate-300"
           }`}
         >
           {isEditMode ? (
-            <img src={UnlockIcon} alt="unlock" className="w-5 h-5 invert" />
+            <>
+              <img src={UnlockIcon} alt="unlock" className="w-5 h-5 invert" />
+              <span className="hidden md:inline"> 삭제 완료</span>
+            </>
           ) : (
-            <img src={LockIcon} alt="lock" className="w-5 h-5 invert" />
+            <>
+              <img src={LockIcon} alt="lock" className="w-5 h-5 invert" />
+              <span className="hidden md:inline"> 삭제 모드</span>
+            </>
           )}
         </button>
       </div>
@@ -74,25 +82,45 @@ export const Header = () => {
             onClick={() =>
               setActiveForm(activeForm === "material" ? null : "material")
             }
-            className={`flex-1 lg:flex-none px-4 py-3 lg:py-2 rounded-xl font-bold text-xs md:text-sm transition-all border-2 cursor-pointer ${
+            className={`flex items-center justify-center gap-2 flex-1 lg:flex-none px-4 py-3 lg:py-2 rounded-xl font-bold text-base md:text-base transition-all border-2 cursor-pointer ${
               activeForm === "material"
                 ? "bg-blue-500 text-white border-blue-500"
                 : "bg-white text-slate-700 border-slate-200"
             }`}
           >
-            {activeForm === "material" ? "✖️ 자재등록" : "➕ 자재등록"}
+            {activeForm === "material" ? (
+              <>
+                <img src={crossIcon} alt="close" className="w-6 h-6 shrink-0" />
+                <span className="whitespace-nowrap">자재등록</span>
+              </>
+            ) : (
+              <>
+                <img src={plusIcon} alt="plus" className="w-6 h-6 shrink-0" />
+                <span className="whitespace-nowrap">자재등록</span>
+              </>
+            )}
           </button>
           <button
             onClick={() =>
               setActiveForm(activeForm === "product" ? null : "product")
             }
-            className={`flex-1 lg:flex-none px-4 py-3 lg:py-2 rounded-xl font-bold text-xs md:text-sm transition-all border-2 cursor-pointer ${
+            className={`flex items-center justify-center gap-1.5 flex-1 lg:flex-none px-4 py-3 lg:py-2 rounded-xl font-bold text-base md:text-base transition-all border-2 cursor-pointer ${
               activeForm === "product"
                 ? "bg-blue-500 text-white border-blue-500"
                 : "bg-white text-slate-700 border-slate-200"
             }`}
           >
-            {activeForm === "product" ? "✖️ 제품등록" : "➕ 제품등록"}
+            {activeForm === "product" ? (
+              <>
+                <img src={crossIcon} alt="close" className="w-6 h-6 shrink-0" />
+                <span className="whitespace-nowrap">제품등록</span>
+              </>
+            ) : (
+              <>
+                <img src={plusIcon} alt="plus" className="w-6 h-6 shrink-0" />
+                <span className="whitespace-nowrap">제품등록</span>
+              </>
+            )}
           </button>
         </div>
       </div>

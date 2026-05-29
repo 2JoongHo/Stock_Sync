@@ -55,9 +55,10 @@ export const InventoryList = () => {
           {/* 엑셀 내보내기 버튼 */}
           <button
             onClick={() => exportFullInventoryReport(items, logs, products)}
-            className="flex items-center justify-center w-9 h-9 bg-emerald-500 text-white rounded font-bold cursor-pointer hover:bg-emerald-600 transition-all shadow-sm"
+            className="flex items-center gap-1 justify-center w-9 h-9 md:w-auto md:px-3 bg-emerald-500 text-white rounded font-bold cursor-pointer hover:bg-emerald-600 transition-all shadow-sm"
           >
             <img src={downloadIcon} alt="download" className="w-5 h-5 invert" />
+            <span className="hidden md:inline">엑셀 내보내기</span>
           </button>
           {/* 
           카메라 버튼

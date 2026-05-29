@@ -130,9 +130,10 @@ export const NewProductForm = () => {
         <button
           type="button" // form 제출을 막기 위해 type="button" 명시
           onClick={() => setIsCameraOpen(true)}
-          className="flex items-center justify-center w-9 h-9 bg-purple-600 text-white rounded font-bold cursor-pointer hover:bg-purple-700 transition-all shadow-sm"
+          className="flex items-center justify-center w-9 h-9 md:w-auto md:px-3 bg-purple-600 text-white rounded font-bold cursor-pointer hover:bg-purple-700 transition-all shadow-sm"
         >
           <img src={cameraIcon} alt="camera" className="w-5 h-5 invert" />
+          <span className="hidden md:inline">스캔</span>
         </button>
       </div>
 

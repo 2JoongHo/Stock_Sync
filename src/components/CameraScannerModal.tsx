@@ -1,4 +1,4 @@
-// src/components/CameraScannerModal.tsx
+// 카메라 스캐너 모달 컴포넌트
 
 import jsQR from "jsqr"; // QR코드 인식 라이브러리
 import { useEffect, useRef, useState } from "react";
@@ -146,10 +146,10 @@ export const CameraScannerModal = ({
     <div className="fixed inset-0 bg-black bg-opacity-80 flex flex-col items-center justify-center z-50 p-4 animate-fadeIn">
       <div className="bg-white p-6 rounded-2xl w-full max-w-md shadow-2xl">
         <h3 className="text-lg font-black text-slate-900 mb-2 flex items-center gap-2">
-          🤖 자재 라벨 스캔룸
+          🤖 자재 라벨 스캔
         </h3>
         <p className="text-slate-500 text-xs mb-4">
-          자재 박스의 [품명, 수량, 코드] 라벨이 화면 중앙에 오도록 비춰주세요.
+          자재의 [품명, 수량, 코드]가 화면 중앙에 오도록 비춰주세요.
         </p>
 
         {/* 실시간 폰 카메라 화면이 나오는 렌즈 국소 */}
