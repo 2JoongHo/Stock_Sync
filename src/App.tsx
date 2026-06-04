@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { DashboardChart } from "./components/DashboardChart";
 import { Header } from "./components/Header";
 import { InventoryList } from "./components/InventoryList";
 import { NewInventoryForm } from "./components/NewInventoryForm";
@@ -69,6 +70,11 @@ function App() {
             <NewProductForm />
           </div>
         )}
+      </div>
+
+      {/* 대시보드 차트 */}
+      <div className="mb-10">
+        <DashboardChart />
       </div>
 
       {/* 완제품 생산/출고 공정 */}

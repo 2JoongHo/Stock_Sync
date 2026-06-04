@@ -73,7 +73,7 @@ export const StockLogs = () => {
         <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
           <input
             type="text"
-            placeholder="자재/제품/Lot 검색..."
+            placeholder="자재 / 제품 / Lot 검색..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="px-3 py-1.5 bg-slate-50 border border-slate-300 rounded-md text-sm focus:outline-none focus:border-slate-500"
@@ -134,17 +134,19 @@ export const StockLogs = () => {
                         [{formatStockDate(log.timestamp)}] [{log.handler}]
                       </strong>
                       {/* 완제품 출고 시 어떤 제품 때문인지 표시 */}
-                      {log.productName && (
-                        <span className="ml-2 text-[0.65rem] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded font-bold">
-                          {log.productName}
-                          {/* Lot No가 있을 때만 추가 표시 */}
-                          {log.lotNo && (
-                            <span className="ml-2 text-[0.65rem] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded font-bold">
-                              {log.lotNo}
-                            </span>
-                          )}
-                        </span>
-                      )}
+                      <div>
+                        {log.productName && (
+                          <span className="ml-2 text-[0.65rem] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded font-bold">
+                            {log.productName}
+                            {/* Lot No가 있을 때만 추가 표시 */}
+                            {log.lotNo && (
+                              <span className="ml-2 text-[0.65rem] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded font-bold">
+                                {log.lotNo}
+                              </span>
+                            )}
+                          </span>
+                        )}
+                      </div>
                     </div>
 
                     {/* 입출고 내역 */}
