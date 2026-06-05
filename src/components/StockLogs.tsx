@@ -78,20 +78,30 @@ export const StockLogs = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
             className="px-3 py-1.5 bg-slate-50 border border-slate-300 rounded-md text-sm focus:outline-none focus:border-slate-500"
           />
-          <div className="flex gap-1 bg-slate-200 p-1 rounded-md">
-            {["ALL", "IN", "OUT"].map((type) => (
-              <button
-                key={type}
-                onClick={() => setFilterType(type)}
-                className={`px-3 py-1 rounded text-xs font-bold transition-colors ${
-                  filterType === type
-                    ? "bg-white text-slate-800 shadow-sm"
-                    : "text-slate-500 hover:text-slate-700"
-                }`}
-              >
-                {type === "ALL" ? "전체" : type === "IN" ? "입고" : "출고"}
-              </button>
-            ))}
+          <div className="flex gap-1 bg-slate-100 p-1 rounded-lg shrink-0">
+            {["ALL", "IN", "OUT"].map((type) => {
+              // 버튼 스타일 정의
+              const unselectedStyle = "text-slate-500 hover:text-slate-700";
+              let selectedStyle = "";
+              if (type === "ALL")
+                selectedStyle = "bg-white text-slate-900 shadow-sm"; // 전체
+              else if (type === "IN")
+                selectedStyle = "bg-blue-500 text-white shadow-sm"; // 입고
+              else if (type === "OUT")
+                selectedStyle = "bg-red-500 text-white shadow-sm"; // 출고
+
+              return (
+                <button
+                  key={type}
+                  onClick={() => setFilterType(type)}
+                  className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${
+                    filterType === type ? selectedStyle : unselectedStyle
+                  }`}
+                >
+                  {type === "ALL" ? "전체" : type === "IN" ? "입고" : "출고"}
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>

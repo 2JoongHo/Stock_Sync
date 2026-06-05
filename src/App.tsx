@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { Toaster } from "react-hot-toast";
 import { DashboardChart } from "./components/DashboardChart";
 import { Header } from "./components/Header";
 import { InventoryList } from "./components/InventoryList";
@@ -54,6 +55,18 @@ function App() {
 
   return (
     <div className="p-4 md:p-8 max-w-6xl mx-auto font-sans bg-slate-50 min-h-screen">
+      <Toaster
+        position="top-center"
+        toastOptions={{
+          duration: 3000,
+          style: {
+            background: "#334155", // 세련된 짙은 남색 배경
+            color: "#fff",
+            fontWeight: "bold",
+            borderRadius: "12px",
+          },
+        }}
+      />
       <Header />
 
       {/* 선택된 폼만 아래로 내려와서 열리는 영역 */}
@@ -72,7 +85,7 @@ function App() {
         )}
       </div>
 
-      {/* 대시보드 차트 */}
+      {/* 실시간 재고 차트 */}
       <div className="mb-10">
         <DashboardChart />
       </div>

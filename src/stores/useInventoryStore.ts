@@ -1,3 +1,4 @@
+import toast from "react-hot-toast";
 import { create } from "zustand";
 import { supabase } from "../supabaseClient"; // 클라이언트 가져오기
 import type { InventoryItem, Product, StockLog } from "../types/inventory";
@@ -113,14 +114,40 @@ export const useInventoryStore = create<InventoryState>((set, get) => ({
   dispatchProduct: async (product, productAmount, lotNo) => {
     const { items, userName } = get();
 
+    // 부족 자재 체크용 배열
+    const shortageItems = [];
+
     // 재고 검증
     for (const bomInfo of product.bom) {
       const item = items.find((i) => i.id === bomInfo.materialId);
       const totalRequired = bomInfo.quantity * productAmount;
+
+      // 부족 자재 발견 시 배열에 저장
       if (!item || item.currentStock < totalRequired) {
-        alert(`재고 부족: [${item?.name}]`);
-        return;
+        const itemName = item?.name || "알 수 없는 자재";
+        const current = item?.currentStock || 0;
+        // 부족 수량 전달
+        shortageItems.push(
+          `${itemName} [부족 : ${(totalRequired - current).toLocaleString()}]`,
+        );
       }
+    }
+
+    // 재고 부족 시 사용자에게 알림 후 공정 중단
+    if (shortageItems.length > 0) {
+      toast.error(
+        `출고 실패! 다음 자재가 부족합니다:\n\n${shortageItems.join("\n")}`,
+        {
+          duration: 5000, // 5초 동안 띄우기
+          style: {
+            background: "#F43F5E",
+            color: "#fff",
+            whiteSpace: "pre-line",
+            textAlign: "left",
+          },
+        },
+      );
+      return; // 공정 중단
     }
 
     // 자재 차감 및 로그 생성 공정
@@ -150,6 +177,11 @@ export const useInventoryStore = create<InventoryState>((set, get) => ({
     }
 
     await get().fetchInitialData();
+
+    // 성공 시 알람
+    toast.success(`${product.name} ${productAmount}개 생산/출고 완료`, {
+      style: { background: "#10B981" },
+    });
   },
 
   // 완제품 추가
