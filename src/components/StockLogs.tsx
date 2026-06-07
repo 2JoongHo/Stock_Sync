@@ -76,7 +76,7 @@ export const StockLogs = () => {
             placeholder="자재 / 제품 / Lot 검색..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="px-3 py-1.5 bg-slate-50 border border-slate-300 rounded-md text-sm focus:outline-none focus:border-slate-500"
+            className="px-3 py-1.5 rounded border border-slate-300 bg-white w-full text-base focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
           />
           <div className="flex gap-1 bg-slate-100 p-1 rounded-lg shrink-0">
             {["ALL", "IN", "OUT"].map((type) => {
@@ -94,7 +94,7 @@ export const StockLogs = () => {
                 <button
                   key={type}
                   onClick={() => setFilterType(type)}
-                  className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${
+                  className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all cursor-pointer ${
                     filterType === type ? selectedStyle : unselectedStyle
                   }`}
                 >

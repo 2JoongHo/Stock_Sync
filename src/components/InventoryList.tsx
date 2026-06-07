@@ -46,7 +46,7 @@ export const InventoryList = () => {
   };
 
   return (
-    <section className="mt-5">
+    <section className="mt-5" id="inventory-list">
       <div className="flex flex-col md:flex-row md:justify-between items-start md:items-center mb-5 gap-4">
         <div className="flex items-center justify-between w-full md:w-auto md:gap-3">
           <h2 className="m-0 text-xl font-bold text-slate-900 flex items-center gap-2">

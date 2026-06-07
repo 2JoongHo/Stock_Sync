@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { Toaster } from "react-hot-toast";
 import { DashboardChart } from "./components/DashboardChart";
+import { DashboardWidgets } from "./components/DashboardWidgets";
 import { Header } from "./components/Header";
 import { InventoryList } from "./components/InventoryList";
 import { NewInventoryForm } from "./components/NewInventoryForm";
@@ -68,6 +69,9 @@ function App() {
         }}
       />
       <Header />
+
+      {/* 대시보드 위젯 */}
+      <DashboardWidgets />
 
       {/* 선택된 폼만 아래로 내려와서 열리는 영역 */}
       <div className="transition-all duration-300">

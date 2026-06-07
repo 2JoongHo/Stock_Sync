@@ -65,7 +65,7 @@ export const Header = () => {
       </div>
 
       {/* 로고 및 설명 */}
-      <div className="mb-10 flex flex-col lg:flex-row lg:items-end justify-between gap-6">
+      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
         <div className="text-center lg:text-left">
           {/* 로고 */}
           <h1 className="text-slate-900 text-3xl md:text-4xl font-black tracking-tight">

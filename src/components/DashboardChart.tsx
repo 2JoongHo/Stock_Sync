@@ -23,7 +23,7 @@ export const DashboardChart = () => {
     .map((item) => ({
       name: item.name,
       재고량: item.currentStock,
-      안전재고: 50,
+      안전재고: 101,
     }));
 
   // 데이터가 없을 경우 표시
@@ -95,7 +95,7 @@ export const DashboardChart = () => {
                 <Cell
                   key={`cell-${index}`}
                   // 안전재고 미만이면 빨간색 경고 표시
-                  fill={entry.재고량 < 50 ? "#F43F5E" : "#3B82F6"}
+                  fill={entry.재고량 < 101 ? "#F43F5E" : "#3B82F6"}
                   className="transition-all duration-300 hover:opacity-80"
                 />
               ))}

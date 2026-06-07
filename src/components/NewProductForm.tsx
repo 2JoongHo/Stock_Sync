@@ -121,7 +121,7 @@ export const NewProductForm = () => {
 
   return (
     <section className="mb-8 p-5 bg-slate-100 rounded-lg">
-      <div className="flex justify-between items-center mb-4">
+      <div className="flex justify-between items-center">
         <h2 className="mt-0 mb-4 text-xl font-bold text-slate-900">
           ➕ 신규 제품 등록
         </h2>
@@ -130,7 +130,7 @@ export const NewProductForm = () => {
         <button
           type="button" // form 제출을 막기 위해 type="button" 명시
           onClick={() => setIsCameraOpen(true)}
-          className="flex items-center justify-center w-9 h-9 md:w-auto md:px-3 bg-purple-600 text-white rounded font-bold cursor-pointer hover:bg-purple-700 transition-all shadow-sm"
+          className="flex mb-4 items-center justify-center gap-1 w-9 h-9 md:w-auto md:px-3 bg-purple-600 text-white rounded font-bold cursor-pointer hover:bg-purple-700 transition-all shadow-sm"
         >
           <img src={cameraIcon} alt="camera" className="w-5 h-5 invert" />
           <span className="hidden md:inline">스캔</span>
