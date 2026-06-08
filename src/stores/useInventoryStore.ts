@@ -17,6 +17,7 @@ interface InventoryState {
   updateStock: (itemId: string, amount: number) => Promise<void>;
   addItem: (newItem: InventoryItem) => Promise<void>;
   removeItem: (itemId: string) => Promise<void>;
+  updateSafetyStock: (itemId: string, newSafetyStock: number) => Promise<void>;
 
   // 완제품 관련
   addProduct: (newProduct: Product) => Promise<void>;
@@ -49,7 +50,7 @@ export const useInventoryStore = create<InventoryState>((set, get) => ({
     set({ userName: name });
   },
 
-  // 앱 시작 시 DB에서 데이터를 싹 긁어오는 함수
+  // 앱 시작 시 DB에서 데이터를 긁어오는 함수
   fetchInitialData: async () => {
     const { data: items } = await supabase
       .from("items")
@@ -209,6 +210,27 @@ export const useInventoryStore = create<InventoryState>((set, get) => ({
   removeItem: async (itemId) => {
     await supabase.from("items").delete().eq("id", itemId);
     await get().fetchInitialData();
+  },
+
+  // 안전재고 기준 업데이트 함수
+  updateSafetyStock: async (itemId, newSafetyStock) => {
+    //  DB를 기다리지 않고 화면(위젯, 차트, 리스트)의 숫자부터 즉시 변경
+    set((state) => ({
+      items: state.items.map((item) =>
+        item.id === itemId ? { ...item, safetyStock: newSafetyStock } : item,
+      ),
+    }));
+
+    // 백그라운드에서 실제 DB(Supabase)에 데이터 수정 요청
+    await supabase
+      .from("items")
+      .update({ safety_stock: newSafetyStock })
+      .eq("id", itemId);
+
+    // 성공 알림
+    toast.success(`안전재고 기준이 ${newSafetyStock}개로 변경되었습니다.`, {
+      style: { background: "#334155", color: "#fff" },
+    });
   },
 
   removeProduct: async (productId) => {

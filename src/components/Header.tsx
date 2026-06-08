@@ -53,12 +53,12 @@ export const Header = () => {
           {isEditMode ? (
             <>
               <img src={UnlockIcon} alt="unlock" className="w-5 h-5 invert" />
-              <span className="hidden md:inline"> 삭제 완료</span>
+              <span className="hidden md:inline"> 수정 완료</span>
             </>
           ) : (
             <>
               <img src={LockIcon} alt="lock" className="w-5 h-5 invert" />
-              <span className="hidden md:inline"> 삭제 모드</span>
+              <span className="hidden md:inline"> 수정 모드</span>
             </>
           )}
         </button>
