@@ -67,7 +67,7 @@ export const ProductDispatch = () => {
   );
 
   return (
-    <section>
+    <section id="product-dispatch">
       <div className="flex flex-col md:flex-row md:justify-between mb-5 gap-4 md:items-center">
         <h2 className="m-0 text-xl font-bold text-slate-900 flex items-center gap-2">
           📦 완제품 출고

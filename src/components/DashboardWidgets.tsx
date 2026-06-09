@@ -29,20 +29,23 @@ export const DashboardWidgets = () => {
     return false;
   }).length;
 
-  // 부족 알람 클릭 시 리스트로 스크롤 이동
-  const scrollToInventory = () => {
-    const element = document.getElementById("inventory-list");
+  // 특정 구역으로 스크롤 후,파란색 테두리 표시
+  const scrollToSection = (
+    elementId: string,
+    ringColor: string = "ring-blue-500",
+  ) => {
+    const element = document.getElementById(elementId);
     if (element) {
       element.scrollIntoView({ behavior: "smooth", block: "start" });
       element.classList.add(
         "ring-4",
-        "ring-rose-400",
+        ringColor, // 여기서 전달받은 색상으로 테두리를 칠합니다.
         "transition-all",
         "duration-500",
         "rounded-2xl",
       );
       setTimeout(() => {
-        element.classList.remove("ring-4", "ring-rose-400");
+        element.classList.remove("ring-4", ringColor);
       }, 1500);
     }
   };
@@ -51,7 +54,10 @@ export const DashboardWidgets = () => {
     // 모바일에서는 2칸씩 2줄, PC에서는 가로로 4칸
     <section className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
       {/* 총 자재 종류 */}
-      <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-center transition-transform hover:-translate-y-1">
+      <div
+        onClick={() => scrollToSection("inventory-list")}
+        className="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-center transition-transform hover:-translate-y-1 cursor-pointer hover:shadow-md"
+      >
         <div className="flex items-center justify-between mb-2">
           <p className="text-sm font-bold text-slate-500">등록된 자재</p>
           <span className="text-xl">📦</span>
@@ -63,7 +69,10 @@ export const DashboardWidgets = () => {
       </div>
 
       {/* 총 완제품 종류 */}
-      <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-center transition-transform hover:-translate-y-1">
+      <div
+        onClick={() => scrollToSection("product-dispatch")}
+        className="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-center transition-transform hover:-translate-y-1 cursor-pointer hover:shadow-md"
+      >
         <div className="flex items-center justify-between mb-2">
           <p className="text-sm font-bold text-slate-500">등록된 완제품</p>
           <span className="text-xl">🛠️</span>
@@ -75,7 +84,10 @@ export const DashboardWidgets = () => {
       </div>
 
       {/* 오늘의 입출고 */}
-      <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-center transition-transform hover:-translate-y-1">
+      <div
+        onClick={() => scrollToSection("stock-logs")}
+        className="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-center transition-transform hover:-translate-y-1 cursor-pointer hover:shadow-md"
+      >
         <div className="flex items-center justify-between mb-2">
           <p className="text-sm font-bold text-slate-500">오늘의 입출고</p>
           <span className="text-xl">📝</span>
@@ -86,12 +98,16 @@ export const DashboardWidgets = () => {
         </h3>
       </div>
 
-      {/* 안전재고 알람 (클릭 가능) */}
+      {/* 안전재고 알람 */}
       <div
-        onClick={shortageCount > 0 ? scrollToInventory : undefined}
+        onClick={
+          shortageCount > 0
+            ? () => scrollToSection("inventory-list", "ring-rose-500")
+            : undefined
+        }
         className={`p-5 rounded-2xl shadow-sm border flex flex-col justify-center transition-all duration-300 hover:-translate-y-1 ${
           shortageCount > 0
-            ? "bg-rose-50 border-rose-200 cursor-pointer"
+            ? "bg-rose-50 border-rose-200 cursor-pointer hover:shadow-md"
             : "bg-emerald-50 border-emerald-200 cursor-default"
         }`}
       >

@@ -63,46 +63,57 @@ export const StockLogs = () => {
     }
   };
 
-  return (
-    <section className="mt-10">
-      {/* 제목과 검색/필터창을 */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <h2 className="m-0 text-xl font-bold">📜 최근 입출고 기록</h2>
+  // 필터 버튼을 변수로 분리하여 재사용성 강화
+  const filterButtons = (
+    <div className="flex gap-1 bg-slate-100 p-1 rounded-lg shrink-0">
+      {["ALL", "IN", "OUT"].map((type) => {
+        const unselectedStyle = "text-slate-500 hover:text-slate-700";
+        let selectedStyle = "";
+        if (type === "ALL") selectedStyle = "bg-white text-slate-900 shadow-sm";
+        else if (type === "IN")
+          selectedStyle = "bg-blue-500 text-white shadow-sm";
+        else if (type === "OUT")
+          selectedStyle = "bg-red-500 text-white shadow-sm";
 
-        {/* 검색창 및 필터 버튼 */}
-        <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
+        return (
+          <button
+            key={type}
+            onClick={() => setFilterType(type)}
+            className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all cursor-pointer ${
+              filterType === type ? selectedStyle : unselectedStyle
+            }`}
+          >
+            {type === "ALL" ? "전체" : type === "IN" ? "입고" : "출고"}
+          </button>
+        );
+      })}
+    </div>
+  );
+
+  return (
+    <section id="stock-logs" className="mt-10">
+      {/* 반응형 레이아웃 분리 */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+        {/* 모바일 상단 (제목 + 필터) / PC 좌측 (제목) */}
+        <div className="flex items-center justify-between w-full md:w-auto gap-3">
+          <h2 className="m-0 text-xl font-bold whitespace-nowrap">
+            📜 최근 입출고 기록
+          </h2>
+          {/* 모바일에서만 보이는 필터 버튼 */}
+          <div className="md:hidden">{filterButtons}</div>
+        </div>
+
+        {/* 모바일 하단 (검색창) / PC 우측 (필터 + 검색창) */}
+        <div className="flex items-center justify-end gap-2 w-full md:w-auto">
+          {/* PC에서만 보이는 필터 버튼 */}
+          <div className="hidden md:block">{filterButtons}</div>
           <input
             type="text"
             placeholder="자재 / 제품 / Lot 검색..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="px-3 py-1.5 rounded border border-slate-300 bg-white w-full text-base focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+            className="px-3 py-1.5 rounded border border-slate-300 bg-white w-full md:w-64 text-base focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
           />
-          <div className="flex gap-1 bg-slate-100 p-1 rounded-lg shrink-0">
-            {["ALL", "IN", "OUT"].map((type) => {
-              // 버튼 스타일 정의
-              const unselectedStyle = "text-slate-500 hover:text-slate-700";
-              let selectedStyle = "";
-              if (type === "ALL")
-                selectedStyle = "bg-white text-slate-900 shadow-sm"; // 전체
-              else if (type === "IN")
-                selectedStyle = "bg-blue-500 text-white shadow-sm"; // 입고
-              else if (type === "OUT")
-                selectedStyle = "bg-red-500 text-white shadow-sm"; // 출고
-
-              return (
-                <button
-                  key={type}
-                  onClick={() => setFilterType(type)}
-                  className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all cursor-pointer ${
-                    filterType === type ? selectedStyle : unselectedStyle
-                  }`}
-                >
-                  {type === "ALL" ? "전체" : type === "IN" ? "입고" : "출고"}
-                </button>
-              );
-            })}
-          </div>
         </div>
       </div>
 
