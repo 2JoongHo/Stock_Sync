@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Toaster } from "react-hot-toast";
 import { DashboardChart } from "./components/DashboardChart";
 import { DashboardWidgets } from "./components/DashboardWidgets";
@@ -20,9 +20,13 @@ function App() {
   //   null,
   // );
 
+  const hasPrompted = useRef(false); // 담당자 이름 입력 프롬프트 중복 방지용
+
   // 앱 접속 시 담당자 확인
   useEffect(() => {
-    if (!userName) {
+    // 현재 관리자 이름 없을 경우에만 실행
+    if (!userName && !hasPrompted.current) {
+      hasPrompted.current = true;
       const inputName = prompt(
         "관리자 성함을 입력해주세요.\n(이 이름은 이 기기의 모든 기록에 사용됩니다.)",
       );
