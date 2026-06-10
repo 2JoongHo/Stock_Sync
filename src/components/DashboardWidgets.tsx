@@ -117,7 +117,7 @@ export const DashboardWidgets = () => {
               shortageCount > 0 ? "text-rose-600" : "text-emerald-600"
             }`}
           >
-            안전 재고 미달
+            안전재고 미달
           </p>
           <span
             className={`text-xl ${shortageCount > 0 ? "animate-bounce" : ""}`}

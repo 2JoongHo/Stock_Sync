@@ -34,6 +34,22 @@ export const InventoryList = () => {
       item.id.toLowerCase().includes(searchTerm.toLowerCase()), // 제품코드
   );
 
+  // 부족 재고는 항상 위로 올라오도록 정렬
+  const sortedItems = [...filteredItems].sort((a, b) => {
+    const aLimit = a.safetyStock ?? GLOBAL_SAFETY_STOCK;
+    const bLimit = b.safetyStock ?? GLOBAL_SAFETY_STOCK;
+
+    const aIsLow = a.currentStock <= aLimit;
+    const bIsLow = b.currentStock <= bLimit;
+
+    // 1순위: 재고가 부족한 것을 무조건 위(-1)로 올립니다.
+    if (aIsLow && !bIsLow) return -1;
+    if (!aIsLow && bIsLow) return 1;
+
+    // 2순위: 둘 다 부족하거나 둘 다 정상이면, 이름 가나다순으로 깔끔하게 정렬합니다.
+    return a.name.localeCompare(b.name);
+  });
+
   // 입출고 실행 함수
   const handleManualUpdate = (itemId: string, type: "IN" | "OUT") => {
     // 특정 자재의 입력창을 ID로 직접 찾아옴 (DOM 접근)
@@ -86,14 +102,14 @@ export const InventoryList = () => {
       </div>
 
       {/* 필터링된 결과가 0개일 때와 있을 때를 나누어 화면을 그림 (조건부 렌더링) */}
-      {filteredItems.length === 0 ? (
+      {sortedItems.length === 0 ? (
         <p className="text-center text-slate-500 py-5">
           {searchTerm ? "검색 결과가 없습니다." : "등록된 자재가 없습니다."}
         </p>
       ) : (
         // 스크롤 구현
         <div className="max-h-[45vh] overflow-y-auto pr-2 custom-scrollbar">
-          {filteredItems.map((item) => {
+          {sortedItems.map((item) => {
             // 개별 안전재고 설정이 있으면 사용, 없으면(??) 기준(100)을 사용
             const safetyLimit = item.safetyStock ?? GLOBAL_SAFETY_STOCK;
             const isLowStock = item.currentStock <= safetyLimit;
