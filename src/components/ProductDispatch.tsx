@@ -107,9 +107,10 @@ export const ProductDispatch = () => {
                 key={product.id}
                 className="flex flex-col p-4 mb-4 bg-white rounded-lg border border-slate-200 shadow-sm hover:border-blue-300 transition-colors"
               >
-                <div className="flex items-center justify-between w-full">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3">
+                {/* 모바일/PC 반응형 */}
+                <div className="flex flex-col md:flex-row items-start md:items-center justify-between w-full gap-3 md:gap-0">
+                  <div className="flex-1 w-full md:w-auto">
+                    <div className="flex items-center justify-between md:justify-start gap-3">
                       <div className="flex flex-col">
                         <span className="font-bold text-slate-800 text-lg">
                           {product.name}
@@ -124,31 +125,37 @@ export const ProductDispatch = () => {
                             expandedId === product.id ? null : product.id,
                           )
                         }
-                        className="text-xs font-bold text-blue-500 hover:text-blue-700 cursor-pointer bg-blue-50 px-2 py-1 rounded"
+                        className="text-xs font-bold text-blue-500 hover:text-blue-700 cursor-pointer bg-blue-50 px-2 py-1 rounded shrink-0"
                       >
                         {/* 상세보기 */}
-                        {expandedId === product.id ? "▲" : "▼"}
+                        {expandedId === product.id
+                          ? "▲ 자재구성"
+                          : "▼ 자재구성"}
                       </button>
                     </div>
                   </div>
 
                   {/* 편집 시 삭제버튼 등장 */}
                   {isEditMode ? (
-                    <button
-                      onClick={() => {
-                        if (
-                          window.confirm(`'${product.name}' 제품을 삭제할까요?`)
-                        ) {
-                          removeProduct(product.id);
-                        }
-                      }}
-                      className="h-9 px-3 bg-red-600 text-white rounded font-bold hover:bg-red-600 cursor-pointer text-sm whitespace-nowrap animate-pulse"
-                    >
-                      삭제
-                    </button>
+                    <div className="w-full md:w-auto flex justify-end">
+                      <button
+                        onClick={() => {
+                          if (
+                            window.confirm(
+                              `'${product.name}' 제품을 삭제할까요?`,
+                            )
+                          ) {
+                            removeProduct(product.id);
+                          }
+                        }}
+                        className="h-9 w-full md:w-auto px-3 bg-red-600 text-white rounded font-bold hover:bg-red-600 cursor-pointer text-sm whitespace-nowrap animate-pulse"
+                      >
+                        삭제
+                      </button>
+                    </div>
                   ) : (
                     // 일반 모드일 때: 기존 '수량 입력 + 생산' 버튼 노출
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center justify-end gap-2 w-full md:w-auto mt-2 md:mt-0">
                       <input
                         type="text"
                         placeholder="Lot No."
@@ -156,7 +163,7 @@ export const ProductDispatch = () => {
                         onChange={(e) =>
                           handleLotChange(product.id, e.target.value)
                         }
-                        className="w-20 h-9 p-1.5 border border-slate-300 rounded text-center text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-20 h-10 md:h-9 p-2 md:p-1.5 border border-slate-300 rounded text-center text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
                       <input
                         id={`qty-${product.id}`}
@@ -167,11 +174,11 @@ export const ProductDispatch = () => {
                         onChange={(e) =>
                           handleAmountChange(product.id, e.target.value)
                         }
-                        className="w-20 h-9 p-1.5 border border-slate-300 rounded text-center text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-20 md:w-20 h-10 md:h-9 p-2 md:p-1.5 border border-slate-300 rounded text-center text-base focus:outline-none focus:ring-2 focus:ring-blue-500 shrink-0"
                       />
                       <button
                         onClick={() => handleDispatch(product)}
-                        className="h-9 px-3 bg-emerald-600 text-white rounded font-bold hover:bg-emerald-900 shadow active:scale-[0.98] cursor-pointer text-sm whitespace-nowrap"
+                        className="h-10 md:h-9 px-4 md:px-3 bg-emerald-600 text-white rounded font-bold hover:bg-emerald-900 shadow active:scale-[0.98] cursor-pointer text-sm whitespace-nowrap shrink-0"
                       >
                         생산
                       </button>

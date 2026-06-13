@@ -60,7 +60,7 @@ export const DashboardWidgets = () => {
       >
         <div className="flex items-center justify-between mb-2">
           <p className="text-sm font-bold text-slate-500">등록된 자재</p>
-          <span className="text-xl">📦</span>
+          <span className="text-xl">🛠️</span>
         </div>
         <h3 className="text-3xl font-black text-slate-800">
           {totalItems}
@@ -75,7 +75,7 @@ export const DashboardWidgets = () => {
       >
         <div className="flex items-center justify-between mb-2">
           <p className="text-sm font-bold text-slate-500">등록된 완제품</p>
-          <span className="text-xl">🛠️</span>
+          <span className="text-xl">📦</span>
         </div>
         <h3 className="text-3xl font-black text-slate-800">
           {totalProducts}
@@ -90,7 +90,7 @@ export const DashboardWidgets = () => {
       >
         <div className="flex items-center justify-between mb-2">
           <p className="text-sm font-bold text-slate-500">오늘의 입출고</p>
-          <span className="text-xl">📝</span>
+          <span className="text-xl">📜</span>
         </div>
         <h3 className="text-3xl font-black text-slate-800">
           {todayLogsCount}

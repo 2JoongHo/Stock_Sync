@@ -73,7 +73,7 @@ export const InventoryList = () => {
       <div className="flex flex-col md:flex-row md:justify-between items-start md:items-center mb-5 gap-4">
         <div className="flex items-center justify-between w-full md:w-auto md:gap-3">
           <h2 className="m-0 text-xl font-bold text-slate-900 flex items-center gap-2">
-            📊 실시간 자재 현황
+            🛠️ 실시간 자재 현황
           </h2>
           {/* 엑셀 내보내기 버튼 */}
           <button

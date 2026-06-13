@@ -98,13 +98,17 @@ function App() {
         <DashboardChart />
       </div>
 
-      {/* 완제품 생산/출고 공정 */}
-      <ProductDispatch />
-
       <hr className="my-10 border-0 border-t border-slate-200" />
 
       {/* 메인 재고 현황 공정 */}
       <InventoryList />
+
+      <hr className="my-10 border-0 border-t border-slate-200" />
+
+      {/* 완제품 생산/출고 공정 */}
+      <ProductDispatch />
+
+      <hr className="my-10 border-0 border-t border-slate-200" />
 
       {/* 시스템 로그 공정 */}
       <StockLogs />
