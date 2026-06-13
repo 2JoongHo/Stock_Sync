@@ -72,7 +72,10 @@ export const InventoryList = () => {
     <section className="mt-5" id="inventory-list">
       <div className="flex flex-col md:flex-row md:justify-between items-start md:items-center mb-5 gap-4">
         <div className="flex items-center justify-between w-full md:w-auto md:gap-3">
-          <h2 className="m-0 text-xl font-bold text-slate-900 flex items-center gap-2">
+          <h2
+            id="guide-step-3" // 코치 마크용 id
+            className="m-0 text-xl font-bold text-slate-900 flex items-center gap-2"
+          >
             🛠️ 실시간 자재 현황
           </h2>
           {/* 엑셀 내보내기 버튼 */}

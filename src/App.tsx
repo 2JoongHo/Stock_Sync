@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { Toaster } from "react-hot-toast";
+import { CoachMarks } from "./components/CoachMarks"; // 코치 마크 컴포넌트
 import { DashboardChart } from "./components/DashboardChart";
 import { DashboardWidgets } from "./components/DashboardWidgets";
 import { Header } from "./components/Header";
@@ -72,11 +73,11 @@ function App() {
           },
         }}
       />
+      {/* 코치 마크 컴포넌트 렌더링 */}
+      <CoachMarks />
       <Header />
-
       {/* 대시보드 위젯 */}
       <DashboardWidgets />
-
       {/* 선택된 폼만 아래로 내려와서 열리는 영역 */}
       <div className="transition-all duration-300">
         {activeForm === "material" && (
@@ -92,24 +93,17 @@ function App() {
           </div>
         )}
       </div>
-
       {/* 실시간 재고 차트 */}
       <div className="mb-10">
         <DashboardChart />
       </div>
-
       <hr className="my-10 border-0 border-t border-slate-200" />
-
       {/* 메인 재고 현황 공정 */}
       <InventoryList />
-
       <hr className="my-10 border-0 border-t border-slate-200" />
-
       {/* 완제품 생산/출고 공정 */}
       <ProductDispatch />
-
       <hr className="my-10 border-0 border-t border-slate-200" />
-
       {/* 시스템 로그 공정 */}
       <StockLogs />
     </div>

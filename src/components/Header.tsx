@@ -79,6 +79,7 @@ export const Header = () => {
         {/* 폼 열기/닫기 제어 버튼 그룹 */}
         <div className="flex gap-2 w-full lg:w-auto">
           <button
+            id="guide-step-1" // 코치 마크용 id
             onClick={() =>
               setActiveForm(activeForm === "material" ? null : "material")
             }

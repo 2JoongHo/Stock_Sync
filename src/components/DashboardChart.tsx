@@ -132,6 +132,7 @@ export const DashboardChart = () => {
         {/* 탭 버튼 */}
         <div className="flex gap-1 bg-slate-100 p-1 rounded-lg shrink-0">
           <button
+            id="guide-step-2" // 코치 마크용 id
             onClick={() => setChartMode("DANGER")}
             className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all cursor-pointer ${
               chartMode === "DANGER"
