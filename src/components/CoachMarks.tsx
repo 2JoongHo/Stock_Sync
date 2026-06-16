@@ -2,26 +2,34 @@
 
 import { useEffect, useState } from "react";
 
+// 코치 마크용 id 정보
 const GUIDE_STEPS = [
-  // 자재 등록
+  // 자재 등록 & 제품 등록
   {
     targetId: "guide-step-1",
-    title: "새로운 자재 등록",
-    content: "새로 들어온 자재의 이름과 안전재고 기준을 설정할 수 있습니다.",
+    title: "새로운 자재/제품 등록",
+    content: "새로운 자재와 제품의 구성을\n설정할 수 있습니다.",
   },
   // 차트
   {
     targetId: "guide-step-2",
-    title: "실시간 재고 차트",
+    title: "실시간 차트",
     content:
-      "위험 수준에 도달한 자재나 가장 많이 보유한 자재를 한눈에 파악하세요.",
+      "위험 수준에 도달한 자재나,\n변동 수량등을 한눈에\n파악 할 수 있습니다.",
   },
   // 실시간 자재 현황
   {
     targetId: "guide-step-3",
     title: "자재 입출고 관리",
     content:
-      "목록에서 즉시 입출고를 기록하거나, 클릭하여 상세 내역을 볼 수 있습니다.",
+      "목록에서 즉시 입출고를 기록하거나,\n현재 재고를 확인 할 수 있습니다.",
+  },
+  // 완제품 출고
+  {
+    targetId: "guide-step-4",
+    title: "완제품 출고 관리",
+    content:
+      "목록에서 즉시 출고를 기록하거나,\n클릭하여 상세 내역을 볼 수 있습니다.",
   },
 ];
 
@@ -33,6 +41,18 @@ export const CoachMarks = () => {
 
   const [currentStep, setCurrentStep] = useState(0); // 현재 가이드 스텝 인덱스
   const [targetRect, setTargetRect] = useState<DOMRect | null>(null); // 현재 스텝의 타겟 요소 위치와 크기 저장
+
+  // 스텝이 변경될 때마다 화면 중앙으로 부드럽게 자동 스크롤
+  useEffect(() => {
+    if (!isVisible) return;
+
+    const targetElement = document.getElementById(
+      GUIDE_STEPS[currentStep].targetId,
+    );
+    if (targetElement) {
+      targetElement.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }, [currentStep, isVisible]);
 
   // 현재 스텝의 타겟 요소(ID) 위치와 크기를 추적하여 targetRect 상태에 저장
   useEffect(() => {
@@ -112,8 +132,14 @@ export const CoachMarks = () => {
           </span>
         </div>
 
+        {/* 내용 입력 표기 */}
         <p className="text-sm text-slate-600 mb-6 leading-relaxed">
-          {stepInfo.content}
+          {stepInfo.content.split("\n").map((line, index) => (
+            <span key={index}>
+              {line}
+              <br />
+            </span>
+          ))}
         </p>
 
         <div className="flex justify-between items-center">

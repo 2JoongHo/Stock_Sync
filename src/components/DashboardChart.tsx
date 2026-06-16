@@ -117,7 +117,10 @@ export const DashboardChart = () => {
   // }
 
   return (
-    <section className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200 mt-8">
+    <section
+      id="guide-step-2" // 코치 마크용 id
+      className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200 mt-8"
+    >
       {/* 상단 헤더 & 탭 스위치 */}
       <div className="flex flex-col md:flex-row md:justify-between md:items-end mb-6 gap-4">
         <div>
@@ -132,7 +135,6 @@ export const DashboardChart = () => {
         {/* 탭 버튼 */}
         <div className="flex gap-1 bg-slate-100 p-1 rounded-lg shrink-0">
           <button
-            id="guide-step-2" // 코치 마크용 id
             onClick={() => setChartMode("DANGER")}
             className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all cursor-pointer ${
               chartMode === "DANGER"
