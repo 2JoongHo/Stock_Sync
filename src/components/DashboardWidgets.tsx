@@ -11,7 +11,7 @@ export const DashboardWidgets = () => {
 
   // 안전재고 미달 자재 계산 (101 기준)
   const shortageCount = items.filter(
-    (item) => item.currentStock < (item.safetyStock ?? 101),
+    (item) => item.currentStock < (item.safetyStock ?? 101)
   ).length;
 
   // 오늘 발생한 입출고 건수 계산 (log의 id에 저장된 타임스탬프 활용)
@@ -32,17 +32,16 @@ export const DashboardWidgets = () => {
   // 특정 구역으로 스크롤 후,파란색 테두리 표시
   const scrollToSection = (
     elementId: string,
-    ringColor: string = "ring-blue-500",
+    ringColor: string = "ring-blue-500"
   ) => {
     const element = document.getElementById(elementId);
     if (element) {
-      element.scrollIntoView({ behavior: "smooth", block: "start" });
+      element.scrollIntoView({ behavior: "smooth", block: "center" });
       element.classList.add(
         "ring-4",
-        ringColor, // 여기서 전달받은 색상으로 테두리를 칠합니다.
+        ringColor,
         "transition-all",
-        "duration-500",
-        "rounded-2xl",
+        "duration-500"
       );
       setTimeout(() => {
         element.classList.remove("ring-4", ringColor);

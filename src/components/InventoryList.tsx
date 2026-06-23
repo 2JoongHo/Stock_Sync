@@ -31,7 +31,7 @@ export const InventoryList = () => {
     (item) =>
       item.name.toLowerCase().includes(searchTerm.toLowerCase()) || // 제품명
       item.spec.toLowerCase().includes(searchTerm.toLowerCase()) || // 규격
-      item.id.toLowerCase().includes(searchTerm.toLowerCase()), // 제품코드
+      item.id.toLowerCase().includes(searchTerm.toLowerCase()) // 제품코드
   );
 
   // 부족 재고는 항상 위로 올라오도록 정렬
@@ -54,7 +54,7 @@ export const InventoryList = () => {
   const handleManualUpdate = (itemId: string, type: "IN" | "OUT") => {
     // 특정 자재의 입력창을 ID로 직접 찾아옴 (DOM 접근)
     const inputElement = document.getElementById(
-      `input-${itemId}`,
+      `input-${itemId}`
     ) as HTMLInputElement;
     const value = Number(inputElement.value);
 
@@ -86,13 +86,6 @@ export const InventoryList = () => {
             <img src={downloadIcon} alt="download" className="w-5 h-5 invert" />
             <span className="hidden md:inline">엑셀 내보내기</span>
           </button>
-          {/* 카메라 버튼
-          <button
-            onClick={startCamera}
-            className="flex items-center gap-1 px-3 h-9 bg-purple-600 text-white rounded font-bold text-xs cursor-pointer hover:bg-purple-700 transition-all shadow-sm"
-          >
-            📷
-          </button> */}
         </div>
 
         {/* 오른쪽 정렬 그룹: 수정버튼 + 검색창 */}
@@ -160,7 +153,7 @@ export const InventoryList = () => {
                           item.safetyStock ?? GLOBAL_SAFETY_STOCK;
                         const input = prompt(
                           `[${item.name}]의 새로운 안전재고 기준 수량을 입력해주세요.\n(현재 기준: ${currentSafety}개)`,
-                          String(currentSafety),
+                          String(currentSafety)
                         );
 
                         if (input !== null && input.trim() !== "") {
@@ -180,7 +173,7 @@ export const InventoryList = () => {
                       onClick={() => {
                         if (
                           window.confirm(
-                            `'${item.name}' 자재를 삭제하시겠습니까?`,
+                            `'${item.name}' 자재를 삭제하시겠습니까?`
                           )
                         ) {
                           removeItem(item.id);

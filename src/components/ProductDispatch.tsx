@@ -21,7 +21,7 @@ export const ProductDispatch = () => {
 
   // 각 제품별 생산 수량을 관리하기 위한 바구니 (ID별로 수량 저장)
   const [amounts, setAmounts] = useState<{ [key: string]: number | undefined }>(
-    {},
+    {}
   );
 
   // Lot No 관련
@@ -63,28 +63,19 @@ export const ProductDispatch = () => {
   const filteredProducts = products.filter(
     (p) =>
       p.name.toLowerCase().includes(searchTerm.toLowerCase()) || // 제품명
-      p.id.toLowerCase().includes(searchTerm.toLowerCase()), // 제품코드
+      p.id.toLowerCase().includes(searchTerm.toLowerCase()) // 제품코드
   );
 
   return (
     <section id="product-dispatch">
       <div className="flex flex-col md:flex-row md:justify-between mb-5 gap-4 md:items-center">
-        <h2
-          id="guide-step-4" // 코치 마크용 id
-          className="m-0 text-xl font-bold text-slate-900 flex items-center gap-2"
-        >
-          📦 완제품 출고
+        <h2 className="m-0 text-xl font-bold text-slate-900 flex items-center gap-2">
+          <span id="guide-step-4" className="inline-block px-1 rounded-sm">
+            📦 완제품 출고
+          </span>
         </h2>
 
         <div className="flex items-center gap-2 w-full md:w-auto">
-          {/* 편집모드 버튼 */}
-          {/* <button
-            onClick={() => setIsEditMode(!isEditMode)}
-            className={`h-9 px-4 rounded font-bold text-xs transition-colors cursor-pointer text-white flex-shrink-0 ${isEditMode ? "bg-emerald-500" : "bg-red-500"}`}
-          >
-            {isEditMode ? "수정완료" : "수정하기"}
-          </button> */}
-
           {/* 검색창 연결 */}
           <div className="flex-1 md:flex-none md:w-64">
             <InventorySearch value={searchTerm} onChange={setSearchTerm} />
@@ -125,7 +116,7 @@ export const ProductDispatch = () => {
                       <button
                         onClick={() =>
                           setExpandedId(
-                            expandedId === product.id ? null : product.id,
+                            expandedId === product.id ? null : product.id
                           )
                         }
                         className="text-xs font-bold text-blue-500 hover:text-blue-700 cursor-pointer bg-blue-50 px-2 py-1 rounded shrink-0"
@@ -145,7 +136,7 @@ export const ProductDispatch = () => {
                         onClick={() => {
                           if (
                             window.confirm(
-                              `'${product.name}' 제품을 삭제할까요?`,
+                              `'${product.name}' 제품을 삭제할까요?`
                             )
                           ) {
                             removeProduct(product.id);
@@ -195,7 +186,7 @@ export const ProductDispatch = () => {
                     <div className="grid grid-cols-1 gap-x-6 gap-y-2">
                       {product.bom.map((b) => {
                         const material = items.find(
-                          (i) => i.id === b.materialId,
+                          (i) => i.id === b.materialId
                         );
                         return (
                           <div
