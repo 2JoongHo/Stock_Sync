@@ -37,6 +37,13 @@ export const DashboardWidgets = () => {
     const element = document.getElementById(elementId);
     if (element) {
       element.scrollIntoView({ behavior: "smooth", block: "center" });
+
+      // 실시간 자재 현황을 상단으로 스크롤
+      const scrollableContainer = element.querySelector(".overflow-y-auto");
+      if (scrollableContainer) {
+        scrollableContainer?.scrollTo({ top: 0, behavior: "smooth" });
+      }
+
       element.classList.add(
         "ring-4",
         ringColor,
