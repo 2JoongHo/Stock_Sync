@@ -146,7 +146,7 @@ export const CameraScannerModal = ({
     <div className="fixed inset-0 bg-black bg-opacity-80 flex flex-col items-center justify-center z-50 p-4 animate-fadeIn">
       <div className="bg-white p-6 rounded-2xl w-full max-w-md shadow-2xl">
         <h3 className="text-lg font-black text-slate-900 mb-2 flex items-center gap-2">
-          🤖 자재 라벨 스캔
+          제품 / 자재 라벨 스캔
         </h3>
         <p className="text-slate-500 text-xs mb-4">
           자재의 [품명, 수량, 코드]가 화면 중앙에 오도록 비춰주세요.
@@ -181,7 +181,7 @@ export const CameraScannerModal = ({
               ocrLoading ? "bg-slate-400" : "bg-purple-600 hover:bg-purple-700"
             }`}
           >
-            {ocrLoading ? "🤖 AI 분석 중..." : "📸 사진 촬영"}
+            {ocrLoading ? "🤖 AI 분석 중..." : "스캔"}
           </button>
         </div>
       </div>

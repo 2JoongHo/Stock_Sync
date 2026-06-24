@@ -125,7 +125,9 @@ export const MaterialDetailModal = ({
         <div className="flex items-center justify-between p-5 border-b border-slate-100 bg-slate-50">
           <div>
             <h2 className="text-xl font-bold text-slate-800">{item.name}</h2>
-            <p className="text-sm text-slate-500 mt-1">자재코드: {item.id}</p>
+            <p className="text-sm text-slate-500 mt-1">
+              {item.spec} | {item.id}
+            </p>
           </div>
           <button
             onClick={onClose}
@@ -162,7 +164,7 @@ export const MaterialDetailModal = ({
           </div>
 
           <h3 className="text-sm font-bold text-slate-600 mb-4">
-            최근 10건 재고 변동 추이
+            최근 재고 변동 추이
           </h3>
 
           {/* Recharts 차트 조립 구역 */}
