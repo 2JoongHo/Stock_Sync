@@ -26,7 +26,7 @@ export const MaterialDetailModal = ({
 }: MaterialDetailModalProps) => {
   const { logs } = useInventoryStore();
 
-  // ESC 키를 누르면 모달이 닫히도록 하는 센스 있는 실무 로직
+  // ESC 키를 누르면 모달이 닫힘
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -34,6 +34,22 @@ export const MaterialDetailModal = ({
     window.addEventListener("keydown", handleEsc);
     return () => window.removeEventListener("keydown", handleEsc);
   }, [onClose]);
+
+  // 모달이 열려있을 때 배경 스크롤 방지
+  useEffect(() => {
+    if (isOpen) {
+      // 모달이 열리면 배경의 스크롤을 숨기고 고정
+      document.body.style.overflow = "hidden";
+    } else {
+      // 모달이 닫히면 다시 원래대로
+      document.body.style.overflow = "unset";
+    }
+
+    // 클린업 함수: 혹시라도 모달이 갑자기 강제 종료될 때를 대비
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isOpen]); // isOpen 상태가 변할 때마다 이 로직이 실행
 
   if (!isOpen || !item) return null;
 
