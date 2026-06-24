@@ -4,7 +4,9 @@ import { useState } from "react";
 import downloadIcon from "../assets/downloadIcon.svg";
 import { InventorySearch } from "../components/InventorySearch";
 import { useInventoryStore } from "../stores/useInventoryStore";
+import type { InventoryItem } from "../types/inventory";
 import { exportFullInventoryReport } from "../utils/excelUtils"; // 엑셀로 내보내기
+import { MaterialDetailModal } from "./MaterialDetailModal";
 
 export const InventoryList = () => {
   // Zustand에서 자재 데이터와 수량 업데이트 함수를 가져옴
@@ -24,6 +26,10 @@ export const InventoryList = () => {
   const [searchTerm, setSearchTerm] = useState(""); // 검색어
   const GLOBAL_SAFETY_STOCK = 100; // 개별 설정이 없을 때 적용되는 공장 전체 안전 재고 기준
 
+  // 클릭한 자재 정보를 담아둘 상태 (null이면 모달 닫힘, 자재 정보가 있으면 모달 열림)
+  const [selectedMaterial, setSelectedMaterial] =
+    useState<InventoryItem | null>(null);
+
   // 전체 자재 중 이름이나 규격에 검색어가 포함된 것만 골라내기
   // .filter(): 조건에 맞는 아이템만 모아 새로운 리스트를 생성
   // .toLowerCase(): 대소문자 구분 없이 검색되도록 모두 소문자로 변환하여 비교
@@ -31,7 +37,7 @@ export const InventoryList = () => {
     (item) =>
       item.name.toLowerCase().includes(searchTerm.toLowerCase()) || // 제품명
       item.spec.toLowerCase().includes(searchTerm.toLowerCase()) || // 규격
-      item.id.toLowerCase().includes(searchTerm.toLowerCase()) // 제품코드
+      item.id.toLowerCase().includes(searchTerm.toLowerCase()), // 제품코드
   );
 
   // 부족 재고는 항상 위로 올라오도록 정렬
@@ -54,7 +60,7 @@ export const InventoryList = () => {
   const handleManualUpdate = (itemId: string, type: "IN" | "OUT") => {
     // 특정 자재의 입력창을 ID로 직접 찾아옴 (DOM 접근)
     const inputElement = document.getElementById(
-      `input-${itemId}`
+      `input-${itemId}`,
     ) as HTMLInputElement;
     const value = Number(inputElement.value);
 
@@ -115,7 +121,10 @@ export const InventoryList = () => {
                 key={item.id}
                 className={`mb-4 p-4 flex items-center justify-between rounded-lg border transition-all ${isLowStock ? "bg-rose-50 border-rose-300 border-2" : "bg-white border-slate-200"}`}
               >
-                <div className="flex-1">
+                <div
+                  className="flex-1 cursor-pointer hover:opacity-70 transition-opacity"
+                  onClick={() => setSelectedMaterial(item)}
+                >
                   <div className="flex items-center gap-2">
                     <strong className="text-slate-900">{item.name}</strong>
                     {/* 재고가 위험 기준치 이하면 경고 배지를 보여줌 */}
@@ -153,7 +162,7 @@ export const InventoryList = () => {
                           item.safetyStock ?? GLOBAL_SAFETY_STOCK;
                         const input = prompt(
                           `[${item.name}]의 새로운 안전재고 기준 수량을 입력해주세요.\n(현재 기준: ${currentSafety}개)`,
-                          String(currentSafety)
+                          String(currentSafety),
                         );
 
                         if (input !== null && input.trim() !== "") {
@@ -173,7 +182,7 @@ export const InventoryList = () => {
                       onClick={() => {
                         if (
                           window.confirm(
-                            `'${item.name}' 자재를 삭제하시겠습니까?`
+                            `'${item.name}' 자재를 삭제하시겠습니까?`,
                           )
                         ) {
                           removeItem(item.id);
@@ -213,6 +222,12 @@ export const InventoryList = () => {
           })}
         </div>
       )}
+      {/* 평소엔 숨어있다가 클릭하면 등장 */}
+      <MaterialDetailModal
+        isOpen={selectedMaterial !== null}
+        item={selectedMaterial}
+        onClose={() => setSelectedMaterial(null)}
+      />
     </section>
   );
 };
